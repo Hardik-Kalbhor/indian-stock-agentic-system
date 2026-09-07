@@ -117,7 +117,7 @@ class IndustryShortlistAgent:
                     }
                 ],
                 "universe_top20": ["IREDA", "Tata Power", "NTPC Green", "Suzlon Energy", "Adani Green Energy", "Waaree Energies", "Premier Energies", "Sterling & Wilson", "Borosil Renewables", "Inox Wind"],
-                "near_misses": [{ "ticker": "Adani Green Energy", "reason": "Utility scale developer pure-play, but high P/E (42.1x) and elevated leverage metrics." }],
+                "near_misses": [{ "ticker": "ADANIGREEN", "reason": "Utility scale developer pure-play, but high P/E (42.1x) and elevated leverage metrics." }],
                 "bull_case": "Accelerated DISCOM PPA sign-offs and ALMM module import ban enforcement.",
                 "bear_case": "Transmission grid connectivity bottlenecks and delayed state land acquisition.",
                 "invalidation_factors": ["Discontinuation of ALMM import barriers"],
@@ -196,7 +196,7 @@ class IndustryShortlistAgent:
                     }
                 ],
                 "universe_top20": ["Bharat Electronics", "Hindustan Aeronautics", "Mazagon Dock Shipbuilders", "Bharat Dynamics", "Cochin Shipyard"],
-                "near_misses": [{ "ticker": "Bharat Dynamics", "reason": "Missile pure-play but very high P/E (>65x)." }],
+                "near_misses": [{ "ticker": "COCHINSHIP", "reason": "Defence shipbuilder pure-play but cyclical margin profile." }],
                 "bull_case": "Faster procurement approval for Project 75I submarines and AMCA 5th-gen fighter prototype releases.",
                 "bear_case": "Foreign OEM supply chain bottlenecks for aircraft engines.",
                 "invalidation_factors": ["Reduction in capital acquisition outlay in Union Budget"],
@@ -275,7 +275,7 @@ class IndustryShortlistAgent:
                     }
                 ],
                 "universe_top20": ["Larsen & Toubro", "CG Power", "BHEL", "Siemens India", "ABB India", "Thermax"],
-                "near_misses": [{ "ticker": "ABB India", "reason": "Strong electrification pure-play but trading at PE >60x." }],
+                "near_misses": [{ "ticker": "ABB", "reason": "Strong electrification pure-play but trading at PE >60x." }],
                 "bull_case": "Strong private capex announcements in steel, cement, and data center sectors.",
                 "bear_case": "Delay in central infrastructure project releases post elections.",
                 "invalidation_factors": ["Contraction in private sector capex spending"],
@@ -293,7 +293,7 @@ class IndustryShortlistAgent:
                 "weighting_note": "100-point diagnostic scoring.",
                 "selected_set": [
                     {
-                        "slot": "Slot A", "ticker": "TATAMOTORS", "name": "Tata Motors Ltd",
+                        "slot": "Slot A", "ticker": "TMPV", "name": "Tata Motors Passenger Vehicles Ltd",
                         "mcap": "₹1,64,267 crore", "price": "₹945.00",
                         "role": "Dominant 4W EV market leader in India with JLR net-debt reduction",
                         "badges": ["High confidence", "4W EV Leader", "De-leveraging Play"],
@@ -354,7 +354,7 @@ class IndustryShortlistAgent:
                     }
                 ],
                 "universe_top20": ["Tata Motors", "Exide Industries", "TVS Motor", "Mahindra & Mahindra", "Sona BLW"],
-                "near_misses": [{ "ticker": "Olectra Greentech", "reason": "Electric bus pure-play but high valuation (PE >75x)." }],
+                "near_misses": [{ "ticker": "OLECTRA", "reason": "Electric bus pure-play but high valuation (PE >75x)." }],
                 "bull_case": "Rapid expansion of charging station infrastructure across highways.",
                 "bear_case": "Subsidy taper accelerating price competition.",
                 "invalidation_factors": ["Abrupt withdrawal of EV registration fee waivers"],
@@ -433,7 +433,7 @@ class IndustryShortlistAgent:
                     }
                 ],
                 "universe_top20": ["TCS", "HCL Tech", "Anant Raj", "Netweb Technologies", "Persistent Systems"],
-                "near_misses": [{ "ticker": "Persistent Systems", "reason": "High-quality ER&D IT play but valuation trading near 50x P/E limits margin of safety." }],
+                "near_misses": [{ "ticker": "PERSISTENT", "reason": "High-quality ER&D IT play but valuation trading near 50x P/E limits margin of safety." }],
                 "bull_case": "Surging enterprise demand for sovereign AI cloud infrastructure.",
                 "bear_case": "Slower conversion of AI pilot projects into large ARR enterprise contracts.",
                 "invalidation_factors": ["Cancellation of hyperscale data center power allocations"],
@@ -459,7 +459,7 @@ class IndustryShortlistAgent:
                 "selected_set": [
                     {
                         "slot": "Slot A", "ticker": stock_a["ticker"].replace(".NS", ""), "name": stock_a["name"],
-                        "mcap": f"₹{stock_a['mcap_cr']:,} crore", "price": f"₹{stock_a.get('eps', 25)*15:.2f}",
+                        "mcap": f"₹{stock_a['mcap_cr']:,} crore", "price": stock_a.get("price", f"₹{stock_a.get('eps', 25)*15:.2f}"),
                         "role": "Sector market leader with clean balance sheet and high return ratios",
                         "badges": ["High confidence", "Market Leader", "Strong Ratios"],
                         "diagnostic_score": 75, "market_share_pct": "35.0%",
@@ -475,7 +475,7 @@ class IndustryShortlistAgent:
                     },
                     {
                         "slot": "Slot B", "ticker": stock_b["ticker"].replace(".NS", ""), "name": stock_b["name"],
-                        "mcap": f"₹{stock_b['mcap_cr']:,} crore", "price": f"₹{stock_b.get('eps', 20)*18:.2f}",
+                        "mcap": f"₹{stock_b['mcap_cr']:,} crore", "price": stock_b.get("price", f"₹{stock_b.get('eps', 20)*18:.2f}"),
                         "role": "Challenger player with rapid expansion and high revenue CAGR",
                         "badges": ["High confidence", "Growth Challenger"],
                         "diagnostic_score": 71, "market_share_pct": "22.0%",
@@ -490,8 +490,8 @@ class IndustryShortlistAgent:
                         "audit_trail": f"Fundamentals: 23/30 (ROE {stock_b['roe']}%); Growth: 18/20; Technical: 14/20; Valuation & Hard Filters: 6/15."
                     },
                     {
-                        "slot": "Slot C", "ticker": "CONTENDER", "name": stock_c["name"],
-                        "mcap": f"₹{stock_c['mcap_cr']:,} crore", "price": f"₹{stock_c.get('eps', 15)*22:.2f}",
+                        "slot": "Slot C", "ticker": stock_c["ticker"].replace(".NS", ""), "name": stock_c["name"],
+                        "mcap": f"₹{stock_c['mcap_cr']:,} crore", "price": stock_c.get("price", f"₹{stock_c.get('eps', 15)*22:.2f}"),
                         "role": "Niche product specialist with specialized customer base",
                         "badges": ["Medium confidence", "Niche Specialist"],
                         "diagnostic_score": 64, "market_share_pct": "12.0%",
@@ -507,7 +507,7 @@ class IndustryShortlistAgent:
                     }
                 ],
                 "universe_top20": [t.replace(".NS", "") for t in tickers],
-                "near_misses": [{ "ticker": "MidCap Contender", "reason": "Lower ROCE and higher debt-to-equity ratio." }],
+                "near_misses": [{ "ticker": tickers[3].replace(".NS", "") if len(tickers) > 3 else "CONCOR", "reason": "Lower ROCE and higher debt-to-equity ratio." }],
                 "bull_case": f"Strong demand growth for {sector_name} products.", "bear_case": "Macro economic slowdown and margin pressure.",
                 "invalidation_factors": ["Adverse regulatory changes"], "sources": ["Live yfinance API fundamental & price feeds", "NSE disclosures"]
             }

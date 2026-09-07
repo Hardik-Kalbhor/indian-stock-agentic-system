@@ -75,7 +75,7 @@ class IndustryIdentifierAgent:
                 "pe_range": "28x - 42x",
                 "key_drivers": ["PM E-DRIVE scheme ₹10,900 Cr", "Lithium cell gigafactories", "Fleet electrification"],
                 "conviction": 4,
-                "anchor_stocks": ["TATAMOTORS.NS", "TVSMOTOR.NS", "M&M.NS", "EXIDEIND.NS"]
+                "anchor_stocks": ["TMPV.NS", "TVSMOTOR.NS", "M&M.NS", "EXIDEIND.NS"]
             },
             {
                 "rank": 5,

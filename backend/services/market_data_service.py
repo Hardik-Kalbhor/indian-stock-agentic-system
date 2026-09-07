@@ -18,13 +18,13 @@ SECTOR_TICKER_MAP = {
     "Renewable Energy & Green Power": ["IREDA.NS", "TATAPOWER.NS", "NTPC.NS", "SUZLON.NS", "ADANIGREEN.NS", "WAAREEENER.NS", "PREMIERENE.NS", "INOXWIND.NS"],
     "Defence & Aerospace Manufacturing": ["BEL.NS", "HAL.NS", "MAZDOCK.NS", "COCHINSHIP.NS", "BDL.NS", "DATAPATTNS.NS", "ASTRAMICRO.NS", "PARAS.NS"],
     "Capital Goods & Industrial Engineering": ["LT.NS", "SIEMENS.NS", "ABB.NS", "CGPOWER.NS", "THERMAX.NS", "KIRLOSENG.NS", "CUMMINSIND.NS", "BHEL.NS"],
-    "EV & New-Age Mobility": ["TATAMOTORS.NS", "TVSMOTOR.NS", "M&M.NS", "EXIDEIND.NS", "SONACOMS.NS", "OLECTRA.NS", "AMARARAJA.NS", "UNOMINDA.NS"],
-    "AI Infrastructure, Data Centers & Digital IT": ["TCS.NS", "NETWEB.NS", "ANANTRAJ.NS", "PERSISTENT.NS", "HCLTECH.NS", "INFY.NS", "LTIM.NS", "TEJASNET.NS"],
+    "EV & New-Age Mobility": ["TMPV.NS", "TVSMOTOR.NS", "M&M.NS", "EXIDEIND.NS", "SONACOMS.NS", "OLECTRA.NS", "ARE&M.NS", "UNOMINDA.NS"],
+    "AI Infrastructure, Data Centers & Digital IT": ["TCS.NS", "NETWEB.NS", "ANANTRAJ.NS", "PERSISTENT.NS", "HCLTECH.NS", "INFY.NS", "COFORGE.NS", "TEJASNET.NS"],
     "Banking & Financial Services (BFSI)": ["HDFCBANK.NS", "ICICIBANK.NS", "SBIN.NS", "AXISBANK.NS", "KOTAKBANK.NS", "BANKBARODA.NS", "PNB.NS", "CANBK.NS"],
     "Specialty Chemicals & Advanced Materials": ["SRF.NS", "PIIND.NS", "FLUOROCHEM.NS", "AARTIIND.NS", "DEEPAKNTR.NS", "ATUL.NS", "LINDEINDIA.NS", "CLEAN.NS"],
     "Pharmaceuticals & Healthcare Services": ["SUNPHARMA.NS", "CIPLA.NS", "APOLLOHOSP.NS", "DRREDDY.NS", "DIVISLAB.NS", "LUPIN.NS", "TORNTPHARM.NS", "MANKIND.NS"],
     "Quick Commerce & Logistics": ["ETERNAL.NS", "DELHIVERY.NS", "TCIEXP.NS", "BLUEDART.NS", "MAHLOG.NS", "CONCOR.NS"],
-    "Real Estate & Urban Infrastructure": ["DLF.NS", "GODREJPROP.NS", "OBERREALTY.NS", "PRESTIGE.NS", "MACROTECH.NS", "PHOENIXLTD.NS", "SOBHA.NS", "BRIGADE.NS"],
+    "Real Estate & Urban Infrastructure": ["DLF.NS", "GODREJPROP.NS", "OBEROIRLTY.NS", "PRESTIGE.NS", "LODHA.NS", "PHOENIXLTD.NS", "SOBHA.NS", "BRIGADE.NS"],
     "Cement & Construction Materials": ["ULTRACEMCO.NS", "AMBUJACEM.NS", "ACC.NS", "DALBHARAT.NS", "JKCEMENT.NS", "SHREECEM.NS", "RAMCOCEM.NS", "BIRLACORPN.NS"],
     "FMCG & Consumer Staples": ["HINDUNILVR.NS", "ITC.NS", "NESTLEIND.NS", "BRITANNIA.NS", "DABUR.NS", "MARICO.NS", "TATACONSUM.NS", "GODREJCP.NS"],
     "Metals & Mining": ["TATASTEEL.NS", "JINDALSTEL.NS", "JSWSTEEL.NS", "HINDALCO.NS", "NMDC.NS", "COALINDIA.NS", "VEDL.NS", "NATIONALUM.NS"]
@@ -230,7 +230,7 @@ class MarketDataService:
     @staticmethod
     def calculate_technicals(df: pd.DataFrame) -> dict[str, Any]:
         if df is None or len(df) < 14:
-            df = MarketDataService._generate_mock_price_series("STOCK.NS")
+            df = MarketDataService._generate_mock_price_series("NIFTY.NS")
         return technical_engine.calculate_all(df)
 
     @staticmethod
