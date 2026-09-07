@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nv analytics | Equity Screener — Selected Set Dashboard</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- html2pdf.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    :root {
+      --color-primary: #01696f;
+      --color-primary-light: #4f98a3;
+      --color-bg: #0b0f17;
+      --color-surface: #121824;
+      --color-surface-2: #1a2234;
+      --color-border: #26334d;
+      --color-text-primary: #e2e8f0;
+      --color-text-muted: #94a3b8;
+      --color-green: #10b981;
+      --color-red: #ef4444;
+      --color-amber: #f59e0b;
+      --color-teal: #14b8a6;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --radius-card: 10px;
+      --radius-pill: 20px;
+      --radius-badge: 4px;
+      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --transition: all 160ms ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--color-bg); color: var(--color-text-primary); font-family: var(--font-body); font-size: 0.85rem; padding-top: 56px; }
+
+    /* ACTION BUTTONS */
+    .btn-pdf {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-pdf:hover { transform: translateY(-1px); }
+    .btn-action-sm {
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* PRINT STYLES */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        padding-top: 0 !important;
+      }
+      .header, .sidebar, .btn-pdf, .btn-action-sm {
+        display: none !important;
+      }
+      .main-grid {
+        display: block !important;
+      }
+      .card-box, .stock-card, .summary-card {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        page-break-inside: avoid;
+        margin-bottom: 12px !important;
+      }
+      .custom-table th {
+        background: #f1f5f9 !important;
+        color: #1e293b !important;
+      }
+      .custom-table td {
+        color: #0f172a !important;
+      }
+    }
+
+    /* HEADER */
+    .header {
+      position: fixed; top: 0; left: 0; width: 100%; height: 56px;
+      background: rgba(18, 24, 36, 0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; z-index: 1000;
+    }
+
+    .brand-title { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .brand-title span { color: var(--color-primary-light); font-weight: 600; font-size: 0.85rem; }
+    .header-sub { font-size: 0.72rem; color: var(--color-text-muted); }
+
+    .container { max-width: 1440px; margin: 0 auto; padding: 24px; }
+
+    /* TOP 5 THEME SUMMARY ROW */
+    .summary-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+    .summary-card {
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: var(--radius-card); padding: 14px 16px; cursor: pointer; transition: var(--transition);
+    }
+    .summary-card:hover { border-color: var(--color-primary-light); }
+    .summary-card.active { border: 2px solid var(--color-primary-light); background: var(--color-surface-2); }
+
+    .summary-title { font-size: 0.8rem; font-weight: 700; color: #fff; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .summary-score-line { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+    .summary-score-lbl { font-size: 0.65rem; color: var(--color-text-muted); text-transform: uppercase; }
+    .summary-score-val { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; color: var(--color-primary-light); }
+
+    .score-progress-bar { width: 100%; height: 5px; background: var(--color-surface-2); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+    .score-progress-fill { height: 100%; background: var(--color-primary-light); border-radius: 3px; }
+
+    .summary-range { font-size: 0.68rem; color: var(--color-text-muted); display: flex; justify-content: space-between; }
+
+    /* LAYOUT: SIDEBAR + MAIN CONTENT */
+    .main-grid { display: grid; grid-template-columns: 240px 1fr; gap: 20px; }
+
+    /* SIDEBAR */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .sidebar-box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); padding: 16px; }
+    .sidebar-heading { font-family: var(--font-display); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--color-text-muted); letter-spacing: 0.05em; margin-bottom: 12px; }
+
+    .theme-tab-btn {
+      width: 100%; text-align: left; background: var(--color-surface-2); border: 1px solid var(--color-border);
+      color: var(--color-text-primary); padding: 10px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: var(--transition); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .theme-tab-btn:hover { border-color: var(--color-primary-light); }
+    .theme-tab-btn.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary-light); }
+
+    .caveat-box { font-size: 0.72rem; color: var(--color-text-muted); line-height: 1.45; }
+
+    /* MAIN CONTENT */
+    .content-area { display: flex; flex-direction: column; gap: 20px; }
+    .panel-box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); padding: 22px; box-shadow: var(--shadow-card); }
+
+    .panel-header-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .panel-header-sub { font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 16px; line-height: 1.5; }
+
+    /* SLOTS A, B, C CARDS */
+    .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+    .slot-card { background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--radius-card); padding: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+    
+    .slot-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .slot-ticker { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; color: #fff; }
+    .slot-name { font-size: 0.75rem; color: var(--color-text-muted); }
+    .slot-badge-neutral { background: rgba(1, 105, 111, 0.25); border: 1px solid var(--color-primary-light); color: var(--color-primary-light); font-weight: 800; font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; }
+
+    .badges-row { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 10px 0; }
+    .badge-chip { font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: var(--radius-badge); }
+    .badge-chip.conf { background: rgba(16, 185, 129, 0.18); color: var(--color-green); }
+    .badge-chip.sub { background: rgba(20, 184, 166, 0.18); color: var(--color-teal); }
+    .badge-chip.risk { background: rgba(239, 68, 68, 0.18); color: var(--color-red); }
+
+    .smart-money-box { background: rgba(1, 105, 111, 0.12); border: 1px solid rgba(79, 152, 163, 0.3); border-radius: 6px; padding: 8px 10px; font-size: 0.7rem; margin-bottom: 8px; }
+    .smart-money-title { font-weight: 700; color: var(--color-primary-light); text-transform: uppercase; font-size: 0.62rem; margin-bottom: 4px; display: flex; justify-content: space-between; }
+
+    .governance-box { background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 6px; padding: 8px 10px; font-size: 0.7rem; margin-bottom: 8px; }
+    .sanity-box { background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 6px; padding: 8px 10px; font-size: 0.7rem; margin-bottom: 10px; }
+
+    .ratio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: var(--color-surface); padding: 8px; border-radius: 6px; margin-bottom: 10px; font-size: 0.68rem; text-align: center; }
+    .ratio-val { font-weight: 700; color: #fff; }
+    .ratio-lbl { color: var(--color-text-muted); font-size: 0.62rem; text-transform: uppercase; }
+
+    .slot-score-box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 10px; margin-bottom: 10px; }
+    .slot-score-title { font-size: 0.68rem; color: var(--color-text-muted); font-weight: 700; text-transform: uppercase; display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .slot-score-title strong { color: var(--color-green); font-size: 0.95rem; }
+
+    .pillar-row { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--color-text-muted); margin-bottom: 3px; }
+    .pillar-row span:last-child { color: var(--color-text-primary); font-weight: 600; }
+
+    .audit-box { font-size: 0.7rem; color: var(--color-text-muted); background: var(--color-surface); border: 1px dashed var(--color-border); padding: 8px 10px; border-radius: 6px; line-height: 1.4; }
+
+    /* TABLES */
+    .table-container { width: 100%; overflow-x: auto; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); margin-bottom: 16px; }
+    .custom-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left; }
+    .custom-table th, .custom-table td { padding: 10px 14px; border-bottom: 1px solid var(--color-border); }
+    .custom-table th { background: var(--color-surface-2); font-family: var(--font-display); font-size: 0.72rem; text-transform: uppercase; color: var(--color-text-muted); }
+
+    .top20-pills-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 14px 0; }
+    .pill-top20 { background: var(--color-surface-2); border: 1px solid var(--color-border); color: var(--color-text-primary); font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: var(--radius-pill); }
+
+    .near-miss-card { background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-size: 0.76rem; color: var(--color-text-muted); }
+    .near-miss-card strong { color: var(--color-amber); }
+
+    /* MARKET CAP FILTER MODAL OVERLAY */
+    .mcap-overlay {
+      position: fixed; inset: 0;
+      background: rgba(5, 8, 18, 0.88);
+      backdrop-filter: blur(14px);
+      z-index: 9000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mcap-modal {
+      background: #121824;
+      border: 1px solid #26334d;
+      border-radius: 14px;
+      padding: 36px 40px 32px;
+      width: 560px; max-width: 95vw;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+    .mcap-modal-brand { font-family: var(--font-display); font-weight: 800; font-size: 0.85rem; color: var(--color-primary-light); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .mcap-modal-title { font-family: var(--font-display); font-weight: 800; font-size: 1.55rem; color: #fff; margin-bottom: 6px; }
+    .mcap-modal-sub { font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 28px; line-height: 1.5; }
+
+    .mcap-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 22px; }
+    .mcap-option {
+      background: var(--color-surface-2);
+      border: 2px solid var(--color-border);
+      border-radius: 10px;
+      padding: 16px 8px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-align: center;
+    }
+    .mcap-option:hover { border-color: var(--color-primary-light); transform: translateY(-2px); }
+    .mcap-option.selected { border-color: var(--color-primary-light); background: rgba(1,105,111,0.18); }
+    .mcap-option-icon { font-size: 1.5rem; margin-bottom: 6px; }
+    .mcap-option-label { font-family: var(--font-display); font-size: 0.88rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .mcap-option-desc { font-size: 0.64rem; color: var(--color-text-muted); line-height: 1.3; }
+    .mcap-option-badge { display: inline-block; margin-top: 6px; font-size: 0.58rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; background: rgba(1,105,111,0.25); color: var(--color-primary-light); }
+
+    .mcap-run-btn {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--color-primary), #0a8c8c);
+      color: #fff; border: none; border-radius: 8px;
+      font-family: var(--font-display); font-weight: 800; font-size: 1rem;
+      cursor: pointer; transition: all 0.2s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .mcap-run-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(1,105,111,0.4); }
+    .mcap-run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* ACTIVE FILTER BADGE shown in header once loaded */
+    .cap-filter-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(1,105,111,0.18); border: 1px solid rgba(79,152,163,0.4);
+      color: var(--color-primary-light); font-size: 0.72rem; font-weight: 700;
+      padding: 4px 10px; border-radius: var(--radius-pill);
+      cursor: pointer;
+    }
+    .cap-filter-badge:hover { border-color: var(--color-primary-light); }
+
+    /* DUAL-HANDLE PRICE RANGE SLIDER */
+    .price-range-wrap { position: relative; padding: 10px 0 6px; margin-bottom: 18px; }
+    .price-range-track {
+      position: relative; height: 6px;
+      background: var(--color-surface-2);
+      border-radius: 10px; margin: 0 8px;
+    }
+    .price-range-fill {
+      position: absolute; height: 100%; border-radius: 10px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+      pointer-events: none;
+    }
+    .price-range-input {
+      position: absolute; top: 50%; width: calc(100% + 16px); left: -8px;
+      transform: translateY(-50%);
+      -webkit-appearance: none; appearance: none;
+      height: 6px; background: transparent;
+      pointer-events: none;
+    }
+    .price-range-input::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #fff; border: 3px solid var(--color-primary-light);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      cursor: pointer; pointer-events: all;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .price-range-input::-webkit-slider-thumb:hover,
+    .price-range-input:focus::-webkit-slider-thumb {
+      border-color: #fff; box-shadow: 0 0 0 4px rgba(1,105,111,0.3);
+    }
+    .price-range-input::-moz-range-thumb {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #fff; border: 3px solid var(--color-primary-light);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      cursor: pointer; pointer-events: all;
+    }
+    .price-range-labels {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 14px; font-size: 0.75rem; font-weight: 700;
+    }
+    .price-range-display {
+      text-align: center; margin-top: 12px;
+      font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; color: #fff;
+      letter-spacing: 0.01em;
+    }
+    .price-range-display span { color: var(--color-primary-light); }
+  </style>
+</head>
+<body>
+
+<!-- MARKET CAP + SHARE PRICE FILTER OVERLAY (shown before step 2 runs) -->
+<div class="mcap-overlay" id="mcapOverlay">
+  <div class="mcap-modal" style="width:640px;">
+    <div class="mcap-modal-brand">nv analytics · Step 2</div>
+    <div class="mcap-modal-title">Set Screener Filters</div>
+    <div class="mcap-modal-sub">Choose your market cap segment and share price range before running the screener.</div>
+
+    <!-- FILTER 1: MARKET CAP -->
+    <div style="text-align:left; font-family:var(--font-display); font-size:0.7rem; font-weight:800; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px;">
+      1 · Market Cap Segment <span style="color:var(--color-red);">*</span>
+    </div>
+    <div class="mcap-options" style="margin-bottom:20px;">
+      <div class="mcap-option selected" id="opt-all" onclick="selectMcap('all')">
+        <div class="mcap-option-icon">🌐</div>
+        <div class="mcap-option-label">All Caps</div>
+        <div class="mcap-option-desc">All 3 (Large, Mid & Small)</div>
+        <div class="mcap-option-badge">Full Universe</div>
+      </div>
+      <div class="mcap-option" id="opt-large" onclick="selectMcap('large')">
+        <div class="mcap-option-icon">🏦</div>
+        <div class="mcap-option-label">Large Cap</div>
+        <div class="mcap-option-desc">Top 100 by market cap</div>
+        <div class="mcap-option-badge">₹20,000 Cr+</div>
+      </div>
+      <div class="mcap-option" id="opt-mid" onclick="selectMcap('mid')">
+        <div class="mcap-option-icon">📈</div>
+        <div class="mcap-option-label">Mid Cap</div>
+        <div class="mcap-option-desc">Rank 101–250</div>
+        <div class="mcap-option-badge">₹5,000–₹20,000 Cr</div>
+      </div>
+      <div class="mcap-option" id="opt-small" onclick="selectMcap('small')">
+        <div class="mcap-option-icon">🌱</div>
+        <div class="mcap-option-label">Small Cap</div>
+        <div class="mcap-option-desc">Rank 251+ companies</div>
+        <div class="mcap-option-badge">Below ₹5,000 Cr</div>
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:1px solid var(--color-border); margin-bottom:18px;"></div>
+
+    <!-- FILTER 2: SHARE PRICE RANGE SLIDER -->
+    <div style="text-align:left; font-family:var(--font-display); font-size:0.7rem; font-weight:800; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:14px;">
+      2 · Share Price Range <span style="font-size:0.62rem; color:var(--color-text-muted); font-weight:400; text-transform:none;">(optional)</span>
+    </div>
+
+    <!-- Live display of selected range -->
+    <div class="price-range-display">
+      <span id="priceMinDisplay">₹0</span>
+      &nbsp;—&nbsp;
+      <span id="priceMaxDisplay">₹5,000</span>
+    </div>
+
+    <!-- Dual-handle slider -->
+    <div class="price-range-wrap">
+      <div class="price-range-track" id="priceTrack">
+        <div class="price-range-fill" id="priceFill"></div>
+        <input type="range" class="price-range-input" id="sliderMin"
+               min="0" max="5000" step="50" value="0"
+               oninput="onSliderChange()">
+        <input type="range" class="price-range-input" id="sliderMax"
+               min="0" max="5000" step="50" value="5000"
+               oninput="onSliderChange()">
+      </div>
+    </div>
+
+    <!-- Tick labels -->
+    <div class="price-range-labels">
+      <span style="color:var(--color-text-muted);">₹0</span>
+      <span style="color:var(--color-text-muted);">₹1,250</span>
+      <span style="color:var(--color-text-muted);">₹2,500</span>
+      <span style="color:var(--color-text-muted);">₹3,750</span>
+      <span style="color:var(--color-text-muted);">₹5,000</span>
+    </div>
+
+
+    <button class="mcap-run-btn" id="mcapRunBtn" onclick="runWithFilter()" disabled>
+      ▶ Run Step 2 Screener
+    </button>
+
+    <div style="margin-top:12px; font-size:0.67rem; color:var(--color-text-muted);">
+      * Market cap is required. Share price is optional. You can change both filters anytime from the header.
+    </div>
+  </div>
+</div>
+
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="brand-title">
+      nv analytics <span>Equity Screener — Selected Set</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span class="cap-filter-badge" id="activeCapFilterBadge" onclick="showMcapOverlay()" style="display:none;">
+        🔘 All Cap — Change
+      </span>
+      <span class="cap-filter-badge" id="activePriceFilterBadge" onclick="showMcapOverlay()" style="display:none; border-color:rgba(245,158,11,0.4); color:var(--color-amber);">
+        🔓 Any Price — Change
+      </span>
+      <button id="btnDownloadShortlistPDF" onclick="downloadShortlistPDF()" class="btn-pdf">
+        📥 Download Shortlist PDF
+      </button>
+      <button onclick="window.print()" class="btn-action-sm">
+        🖨️ Print
+      </button>
+      <a href="/" class="btn-action-sm" style="color:var(--color-text-muted);">
+        🏠 Pipeline
+      </a>
+    </div>
+  </header>
+
+  <div class="container" id="step2ExportContainer">
+    
+    <!-- TOP 5 THEME SUMMARY ROW -->
+    <div class="summary-row" id="themeSummaryRow">
+      <!-- Rendered via JS -->
+    </div>
+
+    <!-- MAIN GRID: SIDEBAR + MAIN CONTENT -->
+    <div class="main-grid">
+      
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-box">
+          <div class="sidebar-heading">📌 Target Industries</div>
+          <div id="sidebarTabs">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <div class="sidebar-box caveat-box">
+          <div class="sidebar-heading">Methodology Note</div>
+          Evaluates 100-point diagnostic score: Fundamentals (30), Growth (20), Technical (20), Smart Money & F&O (15), Valuation & Hard Filters (15) - Penalties.
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT AREA -->
+      <main class="content-area">
+        
+        <!-- EXECUTIVE OVERVIEW -->
+        <section class="panel-box">
+          <h2 class="panel-header-title" id="themeTitle">Loading Theme...</h2>
+          <div class="panel-header-sub" id="themeSetup">...</div>
+        </section>
+
+        <!-- UNRANKED SELECTED SET (SLOTS A, B, C) -->
+        <section class="panel-box">
+          <h3 class="panel-header-title" style="font-size:1.1rem;">Selected Stocks Snapshot (Unranked Slots A, B, C)</h3>
+          <p style="font-size:0.75rem; color:var(--color-text-muted); margin-bottom:14px;">Includes 6 financial ratios, Smart Money F&O, SEBI Insider Trades, Valuation Sanity Checks & Hard Filters.</p>
+
+          <div class="slots-grid" id="slotsGrid">
+            <!-- Rendered via JS -->
+          </div>
+        </section>
+
+        <!-- CAPEX EXPANSION TIMELINE TABLE -->
+        <section class="panel-box">
+          <h3 class="panel-header-title" style="font-size:1.1rem;">Planned Capacity Expansion & Capex Timeline</h3>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr><th>Stock Ticker</th><th>Project Name</th><th>Capex Outlay (₹ Cr)</th><th>Expected Completion</th><th>Capacity Addition</th></tr>
+              </thead>
+              <tbody id="tbodyCapex"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- STRUCTURED RISK ASSESSMENT MATRIX TABLE -->
+        <section class="panel-box">
+          <h3 class="panel-header-title" style="font-size:1.1rem;">Structured Sector Risk Assessment Matrix</h3>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr><th>Risk Factor</th><th>Category</th><th>Impact Level</th><th>Probability</th><th>Mitigation Strategy</th></tr>
+              </thead>
+              <tbody id="tbodyRisk"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TOP 20 WORKING UNIVERSE & NEAR MISSES -->
+        <section class="panel-box">
+          <h3 class="panel-header-title" style="font-size:1.1rem;">Top-20 Working Universe & Near Misses</h3>
+          <div class="top20-pills-row" id="top20PillsRow"></div>
+
+          <h4 style="font-family:var(--font-display); font-size:0.85rem; color:var(--color-amber); margin: 14px 0 8px 0;">Near-miss Exclusion Audit Notes</h4>
+          <div id="nearMissesContainer"></div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    let activeThemeName = "Renewable Energy & Green Power";
+    let activeCapFilter = "all";   // default = all 3 caps
+    let priceMin = 0;             // slider min, default ₹0
+    let priceMax = 5000;          // slider max, default ₹5,000
+    let step2Data = null;
+
+    // --- SLIDER HELPERS ---
+    function fmt(v) { return v >= 1000 ? `₹${(v/1000).toFixed(v%1000===0?0:1)}K` : `₹${v}`; }
+
+    function onSliderChange() {
+      const sMin = document.getElementById('sliderMin');
+      const sMax = document.getElementById('sliderMax');
+      let lo = parseInt(sMin.value), hi = parseInt(sMax.value);
+      // prevent handles from crossing
+      if (lo > hi) { lo = hi; sMin.value = lo; }
+      priceMin = lo; priceMax = hi;
+      // update live display
+      document.getElementById('priceMinDisplay').textContent = fmt(lo);
+      document.getElementById('priceMaxDisplay').textContent = fmt(hi);
+      // update track fill
+      const pct1 = (lo / 5000) * 100, pct2 = (hi / 5000) * 100;
+      document.getElementById('priceFill').style.left  = pct1 + '%';
+      document.getElementById('priceFill').style.width = (pct2 - pct1) + '%';
+      // update run button label
+      updateRunBtnLabel();
+      // update header badge live
+      updatePriceFilterBadge();
+    }
+
+    // --- MARKET CAP FILTER ---
+    function selectMcap(cap) {
+      activeCapFilter = cap;
+      ['all','large','mid','small'].forEach(c => {
+        const el = document.getElementById(`opt-${c}`);
+        if (el) el.classList.remove('selected');
+      });
+      const selectedEl = document.getElementById(`opt-${cap}`);
+      if (selectedEl) selectedEl.classList.add('selected');
+      const btn = document.getElementById('mcapRunBtn');
+      btn.disabled = false;
+      updateRunBtnLabel();
+    }
+
+    function updateRunBtnLabel() {
+      const capLabels = { all: '🌐 All Market Caps (All 3)', large: '🏦 Large Cap', mid: '📈 Mid Cap', small: '🌱 Small Cap' };
+      const btn = document.getElementById('mcapRunBtn');
+      if (!activeCapFilter) activeCapFilter = 'all';
+      const isFullRange = priceMin === 0 && priceMax === 5000;
+      const priceStr = isFullRange ? '' : ` · ${fmt(priceMin)}–${fmt(priceMax)}`;
+      btn.disabled = false;
+      btn.textContent = `▶ Run Step 2 — ${capLabels[activeCapFilter] || 'All Caps'}${priceStr}`;
+    }
+
+    function runWithFilter() {
+      if (!activeCapFilter) activeCapFilter = 'all';
+      document.getElementById('mcapOverlay').style.display = 'none';
+      updateCapFilterBadge();
+      updatePriceFilterBadge();
+      loadStep2Data(activeThemeName);
+    }
+
+    function showMcapOverlay() {
+      document.getElementById('mcapOverlay').style.display = 'flex';
+      // restore cap selection
+      if (activeCapFilter) {
+        ['all','large','mid','small'].forEach(c => {
+          const el = document.getElementById(`opt-${c}`);
+          if (el) el.classList.remove('selected');
+        });
+        const selectedEl = document.getElementById(`opt-${activeCapFilter}`);
+        if (selectedEl) selectedEl.classList.add('selected');
+      }
+      // restore slider positions
+      document.getElementById('sliderMin').value = priceMin;
+      document.getElementById('sliderMax').value = priceMax;
+      onSliderChange(); // redraws fill + labels
+    }
+
+    function updateCapFilterBadge() {
+      const badge = document.getElementById('activeCapFilterBadge');
+      const icons = { all: '🌐', large: '🏦', mid: '📈', small: '🌱' };
+      const names = { all: 'All Market Caps (All 3)', large: 'Large Cap', mid: 'Mid Cap', small: 'Small Cap' };
+      const cap = activeCapFilter || 'all';
+      if (icons[cap]) {
+        badge.innerHTML = `${icons[cap]} ${names[cap]} — Change`;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function updatePriceFilterBadge() {
+      const badge = document.getElementById('activePriceFilterBadge');
+      const isFullRange = priceMin === 0 && priceMax === 5000;
+      if (isFullRange) {
+        badge.style.display = 'none';
+      } else {
+        badge.innerHTML = `💰 ${fmt(priceMin)} – ${fmt(priceMax)} — Change`;
+        badge.style.display = 'inline-flex';
+      }
+    }
+
+    // --- DATA LOADING ---
+    async function loadStep2Data(themeName) {
+      try {
+        const res = await fetch(`/api/step2`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sector_name: themeName,
+            market_cap_filter: activeCapFilter || 'all',
+            price_min: priceMin,
+            price_max: priceMax
+          })
+        });
+        step2Data = await res.json();
+        renderDashboard(step2Data);
+      } catch (err) {
+        console.error("Error loading Step 2 data:", err);
+      }
+    }
+
+    function renderDashboard(data) {
+      const details = data.theme_details;
+
+      // Show active filter labels below theme title
+      const capLabel = details.cap_filter_label || 'All Cap Sizes';
+      const priceLabel = details.price_filter_label || 'Any Price';
+      
+      let filterBadgesHtml = `<span style="display:inline-block; margin-left:10px; font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:10px; background:rgba(1,105,111,0.25); color:var(--color-primary-light); cursor:pointer;" onclick="showMcapOverlay()">🔘 ${capLabel}</span>`;
+      if (priceLabel !== 'Any Price') {
+        filterBadgesHtml += `<span style="display:inline-block; margin-left:6px; font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:10px; background:rgba(245,158,11,0.18); border:1px solid rgba(245,158,11,0.4); color:var(--color-amber); cursor:pointer;" onclick="showMcapOverlay()">💰 ${priceLabel}</span>`;
+      }
+
+      document.getElementById('themeSummaryRow').innerHTML = data.theme_summary_list.map(t => `
+        <div class="summary-card ${t.name === data.active_theme ? 'active' : ''}" onclick="selectTheme('${t.name}')">
+          <div class="summary-title">${t.name}</div>
+          <div class="summary-score-line">
+            <span class="summary-score-lbl">Avg Score</span>
+            <span class="summary-score-val">${t.avg_score}</span>
+          </div>
+          <div class="score-progress-bar"><div class="score-progress-fill" style="width:${t.avg_score}%"></div></div>
+          <div class="summary-range"><span>Range</span><span>${t.selected_range}</span></div>
+        </div>
+      `).join('');
+
+      document.getElementById('sidebarTabs').innerHTML = data.theme_summary_list.map(t => `
+        <button class="theme-tab-btn ${t.name === data.active_theme ? 'active' : ''}" onclick="selectTheme('${t.name}')">
+          <span>${t.name}</span><span>${t.avg_score}</span>
+        </button>
+      `).join('');
+
+      document.getElementById('themeTitle').innerHTML = `${details.name} — Selected Set ${filterBadgesHtml}`;
+      document.getElementById('themeSetup').textContent = `Setup: ${details.setup}`;
+
+      // Slots A, B, C Cards
+      const selectedStocks = details.selected_set || [];
+      if (selectedStocks.length === 0) {
+        document.getElementById('slotsGrid').innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--color-text-muted); background:var(--color-surface); border:1px dashed var(--color-border); border-radius:12px;">
+            <div style="font-size:2.4rem; margin-bottom:12px;">🔍</div>
+            <div style="font-family:var(--font-display); font-size:1.15rem; color:#fff; margin-bottom:6px;">No stocks matching filter: ${capLabel} · ${priceLabel}</div>
+            <div style="font-size:0.82rem; margin-bottom:18px;">No companies in <strong>${details.name}</strong> meet the current market cap and price range filters.</div>
+            <button onclick="showMcapOverlay()" style="background:var(--color-primary); border:none; color:#fff; padding:10px 24px; border-radius:6px; font-weight:700; font-family:var(--font-display); cursor:pointer;">⚙️ Adjust Screener Filters</button>
+          </div>`;
+      } else {
+        document.getElementById('slotsGrid').innerHTML = selectedStocks.map(st => `
+          <div class="slot-card">
+            <div>
+              <div class="slot-header">
+                <div>
+                  <div class="slot-ticker">${st.ticker} <span style="font-size:0.75rem; color:var(--color-green);">(${st.market_share_pct} Share)</span></div>
+                  <div class="slot-name">${st.name}</div>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                  <span class="slot-badge-neutral">${st.slot}</span>
+                  <span style="font-size:0.6rem; font-weight:700; padding:2px 6px; border-radius:8px; background:rgba(79,152,163,0.18); color:var(--color-primary-light);">${(st.cap_category||'').toUpperCase()} CAP</span>
+                </div>
+              </div>
+
+              <div style="font-size:0.75rem; color:var(--color-primary-light); font-weight:700; margin-bottom:6px;">${st.mcap} · ${st.price}</div>
+
+              <div class="badges-row">
+                ${st.badges.map((b, idx) => `<span class="badge-chip ${idx === 0 ? 'conf' : (idx === st.badges.length - 1 ? 'risk' : 'sub')}">${b}</span>`).join('')}
+              </div>
+
+              <!-- SMART MONEY & F&O SIGNALS -->
+              <div class="smart-money-box">
+                <div class="smart-money-title"><span>📊 Smart Money & F&O Signal</span><span>PCR: ${st.smart_money_signals.pcr}</span></div>
+                <div>Option OI: <strong>${st.smart_money_signals.fno_signal}</strong></div>
+                <div>FII 3M Net: <strong>${st.smart_money_signals.fii_flow_3m}</strong></div>
+                <div>DII 3M Net: <strong>${st.smart_money_signals.dii_flow_3m}</strong></div>
+              </div>
+
+              <!-- PROMOTER & INSIDER TRADING -->
+              <div class="governance-box">
+                <div style="font-weight:700; color:var(--color-amber); font-size:0.62rem; text-transform:uppercase; margin-bottom:4px;">🛡️ Governance & Insider Action</div>
+                <div>Promoter: <strong>${st.governance_insider_signals.promoter_trend}</strong></div>
+                <div>Insiders: <strong>${st.governance_insider_signals.insider_kmp_action}</strong></div>
+              </div>
+
+              <!-- VALUATION SANITY & HARD FILTERS -->
+              <div class="sanity-box">
+                <div style="font-weight:700; color:var(--color-green); font-size:0.62rem; text-transform:uppercase; margin-bottom:4px;">🩺 Valuation Sanity & Hard Filters</div>
+                <div>PEG Ratio: <strong>${st.valuation_sanity_check.peg_ratio}</strong></div>
+                <div>P/E vs 5Y Median: <strong>${st.valuation_sanity_check.pe_vs_5y_median}</strong></div>
+                <div>12-Qtr Consistency: <strong>${st.valuation_sanity_check.pat_consistency_12q}</strong></div>
+                <div style="margin-top:2px; font-weight:700; color:var(--color-green);">${st.valuation_sanity_check.hard_filter_status}</div>
+              </div>
+
+              <!-- Granular Financial Ratios -->
+              <div class="ratio-grid">
+                <div><div class="ratio-val">${st.financial_ratios.ebitda_margin}</div><div class="ratio-lbl">EBITDA %</div></div>
+                <div><div class="ratio-val">${st.financial_ratios.net_margin}</div><div class="ratio-lbl">Net Margin %</div></div>
+                <div><div class="ratio-val">${st.financial_ratios.current_ratio}</div><div class="ratio-lbl">Current Ratio</div></div>
+                <div><div class="ratio-val">${st.financial_ratios.eps}</div><div class="ratio-lbl">EPS (₹)</div></div>
+                <div><div class="ratio-val">${st.financial_ratios.div_yield}</div><div class="ratio-lbl">Div Yield</div></div>
+                <div><div class="ratio-val">${st.financial_ratios.fcf_share}</div><div class="ratio-lbl">FCF / Share</div></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="slot-score-box">
+                <div class="slot-score-title"><span>Diagnostic Score</span><strong>${st.diagnostic_score} / 100</strong></div>
+                <div class="score-progress-bar" style="margin-bottom:6px;"><div class="score-progress-fill" style="width:${st.diagnostic_score}%; background:var(--color-green);"></div></div>
+                <div class="pillar-row"><span>Fundamentals (30)</span><span>${st.pillars.fundamentals}/30</span></div>
+                <div class="pillar-row"><span>Growth (20)</span><span>${st.pillars.growth}/20</span></div>
+                <div class="pillar-row"><span>Technical (20)</span><span>${st.pillars.technical}/20</span></div>
+                <div class="pillar-row"><span>Smart Money (15)</span><span>${st.pillars.sentiment}/15</span></div>
+                <div class="pillar-row"><span>Valuation (15)</span><span>${st.pillars.valuation}/15</span></div>
+                <div class="pillar-row" style="color:var(--color-red);"><span>Penalties</span><span>${st.pillars.penalties}</span></div>
+              </div>
+
+              <div class="audit-box"><strong>Audit Trail:</strong> ${st.audit_trail}</div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:10px;">
+                <a href="/?step=3&tickers=${(details.selected_set||[]).map(s => s.ticker).join(',')}" target="_blank" style="text-align:center; background:var(--color-surface); border:1px solid var(--color-teal); color:var(--color-teal); padding:8px 4px; border-radius:6px; font-weight:700; text-decoration:none; font-size:0.75rem;">
+                  ⚖️ Step 3 Compare
+                </a>
+                <a href="/?step=4&ticker=${st.ticker}" target="_blank" style="text-align:center; background:var(--color-primary); border:1px solid var(--color-primary-light); color:#fff; padding:8px 4px; border-radius:6px; font-weight:700; text-decoration:none; font-size:0.75rem;">
+                  ⚡ Step 4 Research
+                </a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      let capexRows = [];
+      (details.selected_set||[]).forEach(st => {
+        if (st.capex_timeline) {
+          st.capex_timeline.forEach(c => {
+            capexRows.push(`<tr><td><strong>${st.ticker}</strong></td><td>${c.project_name}</td><td><strong>${c.capex_outlay_cr}</strong></td><td>${c.expected_completion}</td><td>${c.capacity_addition}</td></tr>`);
+          });
+        }
+      });
+      document.getElementById('tbodyCapex').innerHTML = capexRows.join('');
+
+      let riskRows = [];
+      (details.selected_set||[]).forEach(st => {
+        if (st.risk_matrix) {
+          st.risk_matrix.forEach(r => {
+            riskRows.push(`<tr><td><strong>${r.factor}</strong> (${st.ticker})</td><td>${r.category}</td><td><span style="color:var(--color-red); font-weight:700;">${r.impact_level}</span></td><td>${r.probability}</td><td>${r.mitigation_strategy}</td></tr>`);
+          });
+        }
+      });
+      document.getElementById('tbodyRisk').innerHTML = riskRows.join('');
+
+      document.getElementById('top20PillsRow').innerHTML = (details.universe_top20||[]).map(name => `<span class="pill-top20">${name}</span>`).join('');
+      document.getElementById('nearMissesContainer').innerHTML = (details.near_misses||[]).map(nm => `<div class="near-miss-card"><strong>${nm.ticker}</strong> — ${nm.reason}</div>`).join('');
+    }
+
+    function selectTheme(themeName) {
+      activeThemeName = themeName;
+      loadStep2Data(themeName);
+    }
+
+    async function downloadShortlistPDF() {
+      const btn = document.getElementById('btnDownloadShortlistPDF');
+      const originalText = btn ? btn.innerHTML : '📥 Download Shortlist PDF';
+      if (btn) {
+        btn.innerHTML = '⏳ Generating PDF...';
+        btn.disabled = true;
+      }
+
+      const capLabel = { large: 'LargeCap', mid: 'MidCap', small: 'SmallCap' }[activeCapFilter] || 'AllCap';
+      const opt = {
+        margin: [8, 8, 8, 8],
+        filename: `${activeThemeName.replace(/\s+/g, '_')}_${capLabel}_Shortlist_nv_analytics.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+
+      try {
+        const element = document.getElementById('step2ExportContainer');
+        if (window.html2pdf) {
+          await html2pdf().set(opt).from(element).save();
+        } else {
+          window.print();
+        }
+      } catch (err) {
+        console.error('html2pdf shortlist export error:', err);
+        window.print();
+      } finally {
+        if (btn) {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Show filter modal first with All Caps pre-selected
+      document.getElementById('mcapOverlay').style.display = 'flex';
+      selectMcap('all');
+      onSliderChange();
+    });
+  </script>
+</body>
+</html>
+

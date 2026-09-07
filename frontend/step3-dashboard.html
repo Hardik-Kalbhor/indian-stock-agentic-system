@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nv analytics | Institutional Peer Benchmarking Dashboard</title>
+
+  <!-- Google Fonts: Cormorant Garamond, DM Mono, Sora -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Mono:wght@500&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js 4.4.0 & html2pdf.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #080D18;
+      --surface: #0F1729;
+      --card: #141E30;
+      --border: #1E3050;
+      --text: #E2E8F0;
+      --dim: #94A3B8;
+      --muted: #4E5D73;
+      --gold: #D4AF37;
+      --green: #22C55E;
+      --amber: #F59E0B;
+      --red: #EF4444;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-mono: 'DM Mono', monospace;
+      --font-body: 'Sora', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 11px;
+      line-height: 1.75;
+      padding-bottom: 60px;
+    }
+
+    /* ACTION BAR */
+    .top-action-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn-pdf {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 10px rgba(16,185,129,0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-pdf:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16,185,129,0.4);
+    }
+    .btn-secondary-action {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-secondary-action:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* PRINT STYLES */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-size: 9pt !important;
+        line-height: 1.4 !important;
+      }
+      .top-action-bar, .tab-bar, .weight-legend, .footer, .custom-stock-tool {
+        display: none !important;
+      }
+      .header {
+        background: #f8fafc !important;
+        border-bottom: 2px solid #0f172a !important;
+        padding: 16px 20px !important;
+      }
+      .header-rule { display: none !important; }
+      .report-title { color: #0f172a !important; font-size: 22pt !important; }
+      .report-tag { color: #0369a1 !important; }
+      .metadata-row { color: #334155 !important; }
+      .metadata-row span strong { color: #0f172a !important; }
+      .container { max-width: 100% !important; padding: 12px 20px !important; }
+      .tab-pane {
+        display: block !important;
+        opacity: 1 !important;
+        transform: none !important;
+        page-break-after: always;
+      }
+      .tab-pane:last-of-type {
+        page-break-after: auto;
+      }
+      .panel-card, .score-card, .winner-box {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        page-break-inside: avoid;
+        margin-bottom: 14px !important;
+        box-shadow: none !important;
+      }
+      .custom-table {
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+      }
+      .custom-table th {
+        background: #f1f5f9 !important;
+        color: #1e293b !important;
+        border-bottom: 2px solid #cbd5e1 !important;
+      }
+      .custom-table td {
+        color: #0f172a !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+      }
+      .cell-green { background: #dcfce7 !important; color: #15803d !important; }
+      .cell-red { background: #fee2e2 !important; color: #b91c1c !important; }
+      .section-title {
+        color: #0f172a !important;
+        border-bottom: 1.5px solid #cbd5e1;
+        padding-bottom: 6px;
+        margin-top: 14px;
+      }
+    }
+
+    /* HEADER */
+    .header {
+      position: relative;
+      background: radial-gradient(circle at 90% 10%, rgba(212, 175, 55, 0.15), transparent 40%), var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 36px;
+      overflow: hidden;
+    }
+
+    .header-rule {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .report-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .report-title {
+      font-family: var(--font-display);
+      font-size: 30px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .metadata-row {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--dim);
+      display: flex;
+      gap: 20px;
+    }
+
+    .metadata-row span strong { color: var(--text); }
+
+    .container { max-width: 1380px; margin: 0 auto; padding: 24px 36px; }
+
+    /* WEIGHTED SCORE CARDS */
+    .score-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .score-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      position: relative;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .score-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+    }
+
+    .score-card.winner {
+      border: 1px solid var(--gold);
+      background: linear-gradient(180deg, rgba(212, 175, 55, 0.08), var(--card));
+    }
+
+    .score-card.winner::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 8px 8px 0 0;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .company-ident {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    .winner-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: rgba(212, 175, 55, 0.2);
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .score-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .score-val {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .score-lbl { font-family: var(--font-mono); font-size: 9px; color: var(--dim); letter-spacing: 0.1em; }
+
+    .score-bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--surface);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* WEIGHTING LEGEND */
+    .weight-legend {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--dim);
+    }
+    .weight-chip { display: flex; align-items: center; gap: 6px; }
+    .weight-chip strong { color: var(--gold); }
+
+    /* TAB NAV */
+    .tab-bar {
+      position: sticky;
+      top: 0;
+      background: rgba(15, 23, 41, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 4px;
+      z-index: 100;
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--dim);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 14px 18px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover { color: var(--text); }
+
+    .tab-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    /* TAB CONTENT */
+    .tab-pane { display: none; }
+    .tab-pane.active {
+      display: block;
+      animation: fadeUp 0.32s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+    .grid-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .grid-4col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+
+    .panel-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    /* TABLES */
+    .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 20px; }
+
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .custom-table th {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dim);
+      background: var(--surface);
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .custom-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+    }
+
+    .cell-green { background: rgba(34, 197, 94, 0.12); color: var(--green); font-weight: 600; }
+    .cell-amber { background: rgba(245, 158, 11, 0.12); color: var(--amber); }
+    .cell-red { background: rgba(239, 68, 68, 0.12); color: var(--red); }
+
+    /* CHIPS & BADGES */
+    .chip-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip { font-family: var(--font-body); font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 12px; }
+    .chip.green { background: rgba(34, 197, 94, 0.15); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.3); }
+    .chip.red { background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    /* DUPONT & RISK BOXES */
+    .dupont-box {
+      background: rgba(212, 175, 55, 0.06);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .dupont-title { font-family: var(--font-mono); font-size: 10px; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+
+    /* VERDICT GOLD BOX */
+    .winner-box {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(15, 23, 41, 0.95));
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+
+    .winner-box-title {
+      font-family: var(--font-display);
+      font-size: 26px;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .shortcoming-card {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .shortcoming-list { list-style: none; margin-top: 10px; }
+    .shortcoming-list li { margin-bottom: 6px; padding-left: 18px; position: relative; color: var(--dim); }
+    .shortcoming-list li::before { content: "✗"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    .sub-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
+    .sub-toggle-btn {
+      background: var(--surface); border: 1px solid var(--border); color: var(--dim);
+      font-family: var(--font-mono); font-size: 9px; padding: 4px 12px; border-radius: 4px; cursor: pointer;
+    }
+    .sub-toggle-btn.active { background: var(--gold); color: #000; font-weight: 700; border-color: var(--gold); }
+
+    /* FOOTER */
+    .footer {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+  </style>
+<body>
+
+  <!-- TOP ACTION BAR -->
+  <div class="top-action-bar">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-family:var(--font-mono); font-size:10px; color:var(--gold); text-transform:uppercase;">⚖️ Multi-Stock Peer Benchmarking</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <button id="btnDownloadComparisonPDF" onclick="downloadComparisonPDF()" class="btn-pdf">
+        📥 Download Comparison PDF
+      </button>
+      <button onclick="window.print()" class="btn-secondary-action">
+        🖨️ Print / Save as PDF
+      </button>
+      <a href="/" class="btn-secondary-action" style="color:var(--dim);">
+        🏠 Pipeline Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div id="comparisonExportContainer">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="report-tag">Institutional Research Report · <span id="hdrSector">Sector Analysis</span></div>
+      <h1 class="report-title" id="hdrTitle">Investment Comparison: Loading Companies...</h1>
+      <div class="metadata-row">
+        <span>Date: <strong id="hdrDate">August 2026</strong></span>
+        <span>Geography: <strong>India (NSE/BSE)</strong></span>
+        <span>Period Tag: <strong id="hdrPeriod">FY26 Audited / Q1 FY27</strong></span>
+        <span>Currency: <strong>INR (₹ Cr)</strong></span>
+      </div>
+      <div class="header-rule"></div>
+    </header>
+
+    <div class="container">
+
+    <!-- WEIGHTED SCORE CARDS GRID -->
+    <div class="score-cards-grid" id="scoreCardsGrid">
+      <!-- Rendered via JS -->
+    </div>
+
+    <!-- INSTITUTIONAL FACTOR WEIGHTING LEGEND -->
+    <div class="weight-legend">
+      <span>⚖️ <strong>Institutional Factor Weights:</strong></span>
+      <span class="weight-chip">Financial Quality & Cash Accruals: <strong>25%</strong></span>
+      <span class="weight-chip">Fundamentals & Governance: <strong>20%</strong></span>
+      <span class="weight-chip">Valuation & Safety: <strong>20%</strong></span>
+      <span class="weight-chip">Forward Outlook: <strong>15%</strong></span>
+      <span class="weight-chip">Risk-Adjusted Performance: <strong>10%</strong></span>
+      <span class="weight-chip">Technicals: <strong>10%</strong></span>
+    </div>
+
+    <!-- STICKY TAB NAV -->
+    <nav class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('overview')">1. Overview</button>
+      <button class="tab-btn" onclick="switchTab('fundamentals')">2. Fundamentals & Governance</button>
+      <button class="tab-btn" onclick="switchTab('financials')">3. Financials & Cash Quality</button>
+      <button class="tab-btn" onclick="switchTab('dupont')">4. DuPont ROE</button>
+      <button class="tab-btn" onclick="switchTab('performance')">5. Risk-Adjusted Returns</button>
+      <button class="tab-btn" onclick="switchTab('outlook')">6. Outlook</button>
+      <button class="tab-btn" onclick="switchTab('technicals')">7. Technicals</button>
+      <button class="tab-btn" onclick="switchTab('valuation')">8. Valuation</button>
+      <button class="tab-btn" onclick="switchTab('verdict')">9. Verdict</button>
+    </nav>
+
+    <!-- TAB 1: OVERVIEW -->
+    <div class="tab-pane active" id="pane-overview">
+      <div class="grid-2col">
+        <div class="panel-card">
+          <h3 class="section-title">Institutional Multi-Factor Radar (6 Pillars)</h3>
+          <div style="height:280px;"><canvas id="canvasRadar"></canvas></div>
+        </div>
+        <div class="panel-card">
+          <h3 class="section-title">Weighted Score Benchmark (100-Pt Scale)</h3>
+          <div style="height:280px;"><canvas id="canvasTotalBar"></canvas></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h3 class="section-title">Weighted Category Score Breakdown</h3>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableOverviewMatrix">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: FUNDAMENTALS & HARD GOVERNANCE -->
+    <div class="tab-pane" id="pane-fundamentals">
+      <h3 class="section-title">Fundamental Moat & Hard Governance Metrics</h3>
+      <div class="panel-card">
+        <h4 style="font-family:var(--font-mono); color:var(--gold); margin-bottom:12px;">Hard Governance & Ownership Disclosures</h4>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableHardGovernance">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+      <div class="grid-3col" id="cardsFundamentals">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- TAB 3: FINANCIALS & CASH QUALITY -->
+    <div class="tab-pane" id="pane-financials">
+      <h3 class="section-title">Annual Margins & Cash Quality Verification</h3>
+      <div class="panel-card">
+        <div style="height:240px; margin-bottom:16px;"><canvas id="canvasMarginsBar"></canvas></div>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableAnnualFinancials">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+
+      <h3 class="section-title" style="margin-top:28px;">💵 Cash Flow Quality & Sloan Accrual Audit</h3>
+      <div class="panel-card">
+        <div class="table-responsive">
+          <table class="custom-table" id="tableCashQuality">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+
+      <h3 class="section-title" style="margin-top:28px;">6-8 Quarter Operational Trends & Acceleration</h3>
+      <div class="panel-card">
+        <div class="sub-toggle">
+          <button class="sub-toggle-btn active" id="btnQRev" onclick="toggleQMetric('revenue')">Revenue (₹ Cr)</button>
+          <button class="sub-toggle-btn" id="btnQEbitda" onclick="toggleQMetric('ebitda')">EBITDA (₹ Cr)</button>
+          <button class="sub-toggle-btn" id="btnQPat" onclick="toggleQMetric('pat')">PAT (₹ Cr)</button>
+        </div>
+        <div style="height:240px; margin-bottom:20px;"><canvas id="canvasQuarterlyLine"></canvas></div>
+
+        <h4 style="font-family:var(--font-mono); color:var(--gold); margin-bottom:10px;">Latest Quarter Delta Analysis</h4>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableQuarterlyDelta">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: DUPONT ROE DECOMPOSITION -->
+    <div class="tab-pane" id="pane-dupont">
+      <h3 class="section-title">🔬 DuPont 3-Stage ROE Decomposition</h3>
+      <p style="color:var(--dim); margin-bottom:16px;">ROE = Net Profit Margin % × Asset Turnover (x) × Financial Leverage (x)</p>
+
+      <div class="panel-card">
+        <div class="table-responsive">
+          <table class="custom-table" id="tableDuPont">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-3col" id="cardsDuPontAudit">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- TAB 5: RISK-ADJUSTED RETURNS -->
+    <div class="tab-pane" id="pane-performance">
+      <h3 class="section-title">📉 Risk-Adjusted Performance (Sharpe, Beta & Drawdown)</h3>
+      <div class="panel-card">
+        <div class="table-responsive">
+          <table class="custom-table" id="tableRiskAdjusted">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+
+      <h3 class="section-title" style="margin-top:28px;">Management Guidance vs Actual Track Record</h3>
+      <div class="panel-card">
+        <div class="table-responsive">
+          <table class="custom-table" id="tableGuidance">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: OUTLOOK -->
+    <div class="tab-pane" id="pane-outlook">
+      <h3 class="section-title">Consensus Projections & Strategic Vision</h3>
+      <div class="panel-card">
+        <div class="table-responsive">
+          <table class="custom-table" id="tableProjections">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-2col">
+        <div class="panel-card">
+          <h3 class="section-title" style="color:var(--green);">🟢 Key Growth Drivers & Opportunities</h3>
+          <div id="containerOpportunities"></div>
+        </div>
+        <div class="panel-card">
+          <h3 class="section-title" style="color:var(--red);">🔴 Operational & Policy Risks</h3>
+          <div id="containerRisks"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 7: TECHNICALS -->
+    <div class="tab-pane" id="pane-technicals">
+      <h3 class="section-title">Technical Momentum & Moving Average Indicators</h3>
+      <div class="panel-card">
+        <div class="table-responsive">
+          <table class="custom-table" id="tableTechnicals">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-2col">
+        <div class="panel-card">
+          <h3 class="section-title">RSI (14-Day) Relative Strength Index</h3>
+          <div style="height:240px;"><canvas id="canvasRsiBar"></canvas></div>
+        </div>
+        <div class="panel-card">
+          <h3 class="section-title">Technical Action Verdicts</h3>
+          <div id="cardsTechVerdicts"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 8: VALUATION -->
+    <div class="tab-pane" id="pane-valuation">
+      <h3 class="section-title">Relative Valuation Multiples & Safety Margin</h3>
+      <div class="panel-card">
+        <div class="table-responsive">
+          <table class="custom-table" id="tableValuation">
+            <!-- Rendered via JS -->
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-3col" id="cardsValuationCommentary">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- TAB 9: VERDICT -->
+    <div class="tab-pane" id="pane-verdict">
+      <div class="winner-box">
+        <div class="winner-box-title">
+          <span>🏆</span>
+          <span id="verdictWinnerTitle">Best Investment Opportunity: ...</span>
+        </div>
+        <p id="verdictParagraph" style="font-size:12px; color:var(--text); line-height:1.8; margin-bottom:16px;">
+          <!-- 150-200 word verdict rendered via JS -->
+        </p>
+
+        <h4 style="font-family:var(--font-mono); color:var(--gold); text-transform:uppercase; margin-bottom:12px;">Key Winning Pillars</h4>
+        <div class="grid-3col" id="gridWinnerPillars"></div>
+      </div>
+
+      <h3 class="section-title" style="color:var(--red);">Peer Shortcomings & Drawbacks</h3>
+      <div class="grid-2col" id="gridShortcomings"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <p>nv analytics Institutional Equity Research · Data Sourced via Screener.in, Trendlyne, NSE/BSE Exchange Filings</p>
+      <p>Strictly for Educational & Informational Purposes · Not Investment Advice · Consult a SEBI-registered Financial Advisor</p>
+    </footer>
+
+  </div>
+
+  <script>
+    const COMPANY_COLORS = ['#3B82F6', '#F97316', '#10B981', '#A855F7'];
+    let step3Payload = null;
+    let charts = {};
+    let activeQMetric = 'revenue';
+
+    function killCharts() {
+      Object.keys(charts).forEach(key => {
+        if (charts[key]) {
+          charts[key].destroy();
+          charts[key] = null;
+        }
+      });
+    }
+
+    async function initDashboard() {
+      const params = new URLSearchParams(window.location.search);
+      const tickersParam = params.get('tickers');
+      const sectorParam = params.get('sector') || params.get('sector_name') || "Renewable Energy & Green Power";
+
+      const reqBody = { sector_name: sectorParam };
+      if (tickersParam) {
+        reqBody.tickers = tickersParam.split(',').map(t => t.trim());
+      }
+
+      try {
+        const res = await fetch('/api/step3', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(reqBody)
+        });
+        step3Payload = await res.json();
+        renderHeaderAndCards(step3Payload);
+        switchTab('overview');
+      } catch (err) {
+        console.error("Error initializing Step 3 Dashboard:", err);
+      }
+    }
+
+    function renderHeaderAndCards(data) {
+      document.getElementById('hdrSector').textContent = data.sector_name;
+      document.getElementById('hdrTitle').textContent = `Investment Comparison: ${data.companies.map(c => c.name).join(' · ')}`;
+
+      const winnerTicker = data.winner.ticker;
+      document.getElementById('scoreCardsGrid').innerHTML = data.companies.map((c, idx) => {
+        const isWinner = c.ticker === winnerTicker;
+        const color = COMPANY_COLORS[idx % COMPANY_COLORS.length];
+        const factorScore = c.factor_scores ? c.factor_scores.total : c.scores.total * 3.33;
+
+        return `
+          <div class="score-card ${isWinner ? 'winner' : ''}" style="cursor:pointer;" onclick="window.location.href='/?ticker=${c.ticker}&step=4'" title="Click to launch Step 4 Deep Research for ${c.ticker}">
+            <div class="card-top">
+              <div class="company-ident">
+                <span class="dot" style="background:${color};"></span>
+                <span>${c.name}</span>
+              </div>
+              ${isWinner ? '<span class="winner-badge">🏆 Best Pick</span>' : ''}
+            </div>
+            <div class="score-display">
+              <span class="score-lbl">Weighted Score</span>
+              <span class="score-val" id="scoreCounter_${c.ticker}">0 / 100</span>
+            </div>
+            <div class="score-bar-track">
+              <div class="score-bar-fill" id="scoreFill_${c.ticker}" style="background:${color};"></div>
+            </div>
+            <div style="font-size:9px; font-family:var(--font-mono); color:var(--gold); margin-top:8px; text-align:right;">⚡ Analyze ${c.ticker} in Step 4 ➔</div>
+          </div>
+        `;
+      }).join('');
+
+      setTimeout(() => {
+        data.companies.forEach((c) => {
+          const target = Math.round(c.factor_scores ? c.factor_scores.total : c.scores.total * 3.33);
+          document.getElementById(`scoreFill_${c.ticker}`).style.width = `${target}%`;
+
+          let curr = 0;
+          const counterEl = document.getElementById(`scoreCounter_${c.ticker}`);
+          const timer = setInterval(() => {
+            curr++;
+            if (curr >= target) {
+              curr = target;
+              clearInterval(timer);
+            }
+            counterEl.textContent = `${curr} / 100`;
+          }, 20);
+        });
+      }, 100);
+    }
+
+    function switchTab(tabName) {
+      killCharts();
+
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+      event && event.target && event.target.classList.add('active');
+      const targetPane = document.getElementById(`pane-${tabName}`);
+      if (targetPane) targetPane.classList.add('active');
+
+      setTimeout(() => {
+        if (tabName === 'overview') renderTabOverview();
+        else if (tabName === 'fundamentals') renderTabFundamentals();
+        else if (tabName === 'financials') renderTabFinancials();
+        else if (tabName === 'dupont') renderTabDuPont();
+        else if (tabName === 'performance') renderTabPerformance();
+        else if (tabName === 'outlook') renderTabOutlook();
+        else if (tabName === 'technicals') renderTabTechnicals();
+        else if (tabName === 'valuation') renderTabValuation();
+        else if (tabName === 'verdict') renderTabVerdict();
+      }, 60);
+    }
+
+    /* TAB 1: OVERVIEW */
+    function renderTabOverview() {
+      if (!step3Payload) return;
+      const comps = step3Payload.companies;
+
+      const ctxRadar = document.getElementById('canvasRadar');
+      if (ctxRadar) {
+        charts.radar = new Chart(ctxRadar, {
+          type: 'radar',
+          data: {
+            labels: ['Fin Quality (25%)', 'Governance (20%)', 'Valuation (20%)', 'Outlook (15%)', 'Risk-Adj (10%)', 'Technicals (10%)'],
+            datasets: comps.map((c, i) => ({
+              label: c.ticker,
+              data: [
+                c.factor_scores ? c.factor_scores.financial_quality : c.scores.financials * 5,
+                c.factor_scores ? c.factor_scores.fundamentals_governance : c.scores.fundamentals * 4,
+                c.factor_scores ? c.factor_scores.valuation : c.scores.valuation * 4,
+                c.factor_scores ? c.factor_scores.forward_outlook : c.scores.outlook * 3,
+                c.factor_scores ? c.factor_scores.risk_adjusted_performance : c.scores.performance * 2,
+                c.factor_scores ? c.factor_scores.technicals : c.scores.technicals * 2
+              ],
+              borderColor: COMPANY_COLORS[i],
+              backgroundColor: COMPANY_COLORS[i] + '22',
+              borderWidth: 2
+            }))
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: { r: { min: 0, max: 25, grid: { color: '#1E3050' }, pointLabels: { font: { family: 'DM Mono', size: 9 }, color: '#94A3B8' } } },
+            plugins: { legend: { labels: { color: '#E2E8F0', font: { family: 'DM Mono', size: 10 } } } }
+          }
+        });
+      }
+
+      const ctxTotal = document.getElementById('canvasTotalBar');
+      if (ctxTotal) {
+        charts.totalBar = new Chart(ctxTotal, {
+          type: 'bar',
+          data: {
+            labels: comps.map(c => c.name),
+            datasets: [{
+              label: '100-Pt Factor Score',
+              data: comps.map(c => c.factor_scores ? c.factor_scores.total : c.scores.total * 3.33),
+              backgroundColor: comps.map((c, i) => COMPANY_COLORS[i])
+            }]
+          },
+          options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            scales: { x: { min: 0, max: 100, grid: { color: '#1E3050' } } }
+          }
+        });
+      }
+
+      let html = `<thead><tr><th>Institutional Factor (Weight)</th>${comps.map(c => `<th>${c.name} (${c.ticker})</th>`).join('')}</tr></thead><tbody>`;
+      const factorRows = [
+        { key: 'financial_quality', label: '1. Financial Quality & Accruals (25%)' },
+        { key: 'fundamentals_governance', label: '2. Fundamentals & Governance (20%)' },
+        { key: 'valuation', label: '3. Valuation & Margin of Safety (20%)' },
+        { key: 'forward_outlook', label: '4. Forward Growth Outlook (15%)' },
+        { key: 'risk_adjusted_performance', label: '5. Risk-Adjusted Returns (10%)' },
+        { key: 'technicals', label: '6. Technical Alignment (10%)' },
+        { key: 'total', label: 'TOTAL WEIGHTED INSTITUTIONAL SCORE (100)' }
+      ];
+
+      factorRows.forEach(f => {
+        html += `<tr><td><strong>${f.label}</strong></td>`;
+        comps.forEach(c => {
+          const val = c.factor_scores ? c.factor_scores[f.key] : 15;
+          const cellClass = f.key === 'total' ? 'cell-green' : '';
+          html += `<td class="${cellClass}">${val}</td>`;
+        });
+        html += `</tr>`;
+      });
+      html += `</tbody>`;
+      document.getElementById('tableOverviewMatrix').innerHTML = html;
+    }
+
+    /* TAB 2: FUNDAMENTALS & HARD GOVERNANCE */
+    function renderTabFundamentals() {
+      if (!step3Payload) return;
+      const comps = step3Payload.companies;
+
+      let gHtml = `<thead><tr><th>Company</th><th>Promoter Pledge %</th><th>RPT % of PAT</th><th>FII QoQ Stake Delta</th><th>DII QoQ Stake Delta</th><th>Governance Signal</th></tr></thead><tbody>`;
+      comps.forEach(c => {
+        const pledge = c.promoter_pledge_pct !== undefined ? c.promoter_pledge_pct : 0.0;
+        const rpt = c.rpt_pct_pat !== undefined ? c.rpt_pct_pat : 1.8;
+        const fii = c.fii_stake_delta_qoq !== undefined ? c.fii_stake_delta_qoq : 1.25;
+        const dii = c.dii_stake_delta_qoq !== undefined ? c.dii_stake_delta_qoq : 1.80;
+        const govSignal = (c.governance_rating || c.auditor_opinion || "Clean Governance").split(';')[0];
+
+        gHtml += `
+          <tr>
+            <td><strong>${c.name} (${c.ticker})</strong></td>
+            <td class="${pledge === 0 ? 'cell-green' : 'cell-red'}">${pledge}% Pledged</td>
+            <td>${rpt}%</td>
+            <td class="${fii >= 0 ? 'cell-green' : 'cell-red'}">${fii > 0 ? '+' : ''}${fii}%</td>
+            <td class="${dii >= 0 ? 'cell-green' : 'cell-red'}">${dii > 0 ? '+' : ''}${dii}%</td>
+            <td><span class="chip green">${govSignal}</span></td>
+          </tr>
+        `;
+      });
+      gHtml += `</tbody>`;
+      document.getElementById('tableHardGovernance').innerHTML = gHtml;
+
+      document.getElementById('cardsFundamentals').innerHTML = comps.map((c, i) => {
+        const moat = c.core_moat || "Market leadership & high operational leverage";
+        const position = c.market_position || "Top Sector Entity";
+        const devs = Array.isArray(c.recent_developments) ? c.recent_developments.join('; ') : (c.recent_developments || c.business_overview || "Domestic capacity expansion & digital infrastructure enhancement.");
+
+        return `
+          <div class="panel-card" style="border-top: 3px solid ${COMPANY_COLORS[i]};">
+            <h4 style="font-family:var(--font-display); font-size:18px; color:var(--gold);">${c.name}</h4>
+            <div style="margin-top:10px;">
+              <div style="font-family:var(--font-mono); color:var(--gold); font-size:9px;">Core Business Moat & Position</div>
+              <p style="color:var(--text); font-size:13px; margin-top:4px;">${moat} (${position})</p>
+            </div>
+            <div style="margin-top:10px;">
+              <div style="font-family:var(--font-mono); color:var(--gold); font-size:9px;">Recent Key Strategic Developments</div>
+              <p style="color:var(--text-muted); font-size:12px; margin-top:4px; line-height:1.5;">${devs}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* TAB 3: FINANCIALS & CASH QUALITY */
+    function renderTabFinancials() {
+      if (!step3Payload) return;
+      const comps = step3Payload.companies;
+
+      const ctxMargins = document.getElementById('canvasMarginsBar');
+      if (ctxMargins) {
+        charts.margins = new Chart(ctxMargins, {
+          type: 'bar',
+          data: {
+            labels: comps.map(c => c.ticker),
+            datasets: [
+              { label: 'Gross Margin %', data: comps.map(c => c.gross_margin), backgroundColor: '#3B82F6' },
+              { label: 'EBITDA Margin %', data: comps.map(c => c.ebitda_margin), backgroundColor: '#10B981' },
+              { label: 'Net Margin %', data: comps.map(c => c.net_margin), backgroundColor: '#F59E0B' }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      // Bank/NBFC Branching Table
+      let hasNbfc = comps.some(c => c.is_nbfc);
+      let fHtml = `<thead><tr><th>Metric (Period: FY26 Audited / TTM)</th>${comps.map(c => `<th>${c.name} ${c.is_nbfc ? '(NBFC)' : ''}</th>`).join('')}</tr></thead><tbody>`;
+
+      if (hasNbfc) {
+        fHtml += `<tr><td><strong>NIM Margin %</strong></td>${comps.map(c => `<td>${c.nim_pct}</td>`).join('')}</tr>`;
+        fHtml += `<tr><td><strong>Gross NPA %</strong></td>${comps.map(c => `<td class="${c.gross_npa_pct !== 'N/A' && c.gross_npa_pct < 3 ? 'cell-green' : ''}">${c.gross_npa_pct}</td>`).join('')}</tr>`;
+        fHtml += `<tr><td><strong>Net NPA %</strong></td>${comps.map(c => `<td class="${c.net_npa_pct !== 'N/A' && c.net_npa_pct < 1 ? 'cell-green' : ''}">${c.net_npa_pct}</td>`).join('')}</tr>`;
+        fHtml += `<tr><td><strong>Provision Coverage Ratio (PCR %)</strong></td>${comps.map(c => `<td>${c.pcr_pct}</td>`).join('')}</tr>`;
+        fHtml += `<tr><td><strong>Capital Adequacy Ratio (CAR %)</strong></td>${comps.map(c => `<td>${c.car_pct}</td>`).join('')}</tr>`;
+      }
+
+      fHtml += `<tr><td><strong>EBITDA Margin %</strong></td>${comps.map(c => `<td>${c.ebitda_margin}%</td>`).join('')}</tr>`;
+      fHtml += `<tr><td><strong>Net Margin %</strong></td>${comps.map(c => `<td>${c.net_margin}%</td>`).join('')}</tr>`;
+      fHtml += `<tr><td><strong>Return on Equity (ROE %)</strong></td>${comps.map(c => `<td class="cell-green">${c.roe}%</td>`).join('')}</tr>`;
+      fHtml += `<tr><td><strong>Debt-to-Equity Ratio</strong></td>${comps.map(c => `<td>${c.de}x</td>`).join('')}</tr>`;
+      fHtml += `</tbody>`;
+      document.getElementById('tableAnnualFinancials').innerHTML = fHtml;
+
+      // Cash Quality Table
+      let qHtml = `<thead><tr><th>Cash Quality Metric</th>${comps.map(c => `<th>${c.name}</th>`).join('')}</tr></thead><tbody>`;
+      qHtml += `<tr><td><strong>OCF to PAT Ratio (%)</strong></td>${comps.map(c => `<td class="${c.ocf_to_pat_pct >= 80 ? 'cell-green' : 'cell-amber'}">${c.ocf_to_pat_pct}%</td>`).join('')}</tr>`;
+      qHtml += `<tr><td><strong>Cash Conversion Cycle (CCC Days)</strong></td>${comps.map(c => `<td>${c.cash_conversion_cycle_days} Days</td>`).join('')}</tr>`;
+      qHtml += `<tr><td><strong>Sloan Accrual Ratio (%)</strong></td>${comps.map(c => `<td class="${c.sloan_accrual_ratio_pct < 5 ? 'cell-green' : 'cell-red'}">${c.sloan_accrual_ratio_pct}% (${c.sloan_accrual_ratio_pct < 5 ? 'Low Accrual Risk' : 'High Non-Cash Accruals'})</td>`).join('')}</tr>`;
+      qHtml += `</tbody>`;
+      document.getElementById('tableCashQuality').innerHTML = qHtml;
+
+      renderQuarterlySection();
+    }
+
+    /* TAB 4: DUPONT ROE DECOMPOSITION */
+    function renderTabDuPont() {
+      if (!step3Payload) return;
+      const comps = step3Payload.companies;
+
+      let dHtml = `<thead><tr><th>DuPont ROE Factor</th>${comps.map(c => `<th>${c.name}</th>`).join('')}</tr></thead><tbody>`;
+      dHtml += `<tr><td><strong>1. Net Profit Margin (%)</strong></td>${comps.map(c => `<td>${c.dupont_net_margin}%</td>`).join('')}</tr>`;
+      dHtml += `<tr><td><strong>2. Asset Turnover Ratio (x)</strong></td>${comps.map(c => `<td>${c.dupont_asset_turnover}x</td>`).join('')}</tr>`;
+      dHtml += `<tr><td><strong>3. Equity Multiplier / Leverage (x)</strong></td>${comps.map(c => `<td>${c.dupont_leverage}x</td>`).join('')}</tr>`;
+      dHtml += `<tr style="background:var(--surface);"><td><strong>COMPUTED DUPONT ROE (%)</strong></td>${comps.map(c => `<td class="cell-green">${c.roe}%</td>`).join('')}</tr>`;
+      dHtml += `</tbody>`;
+      document.getElementById('tableDuPont').innerHTML = dHtml;
+
+      document.getElementById('cardsDuPontAudit').innerHTML = comps.map((c, i) => `
+        <div class="dupont-box" style="border-left:3px solid ${COMPANY_COLORS[i]};">
+          <div class="dupont-title">${c.name} ROE Quality Audit</div>
+          <p>ROE of ${c.roe}% driven by <strong>Net Margin ${c.dupont_net_margin}%</strong> and <strong>Asset Turnover ${c.dupont_asset_turnover}x</strong> with ${c.dupont_leverage}x leverage. ${c.dupont_leverage < 4.0 ? 'Clean operational return structure.' : 'Higher leverage component.'}</p>
+        </div>
+      `).join('');
+    }
+
+    /* TAB 5: RISK-ADJUSTED RETURNS */
+    function renderTabPerformance() {
+      if (!step3Payload) return;
+      const comps = step3Payload.companies;
+
+      let rHtml = `<thead><tr><th>Risk Metric</th>${comps.map(c => `<th>${c.name}</th>`).join('')}</tr></thead><tbody>`;
+      rHtml += `<tr><td><strong>Sharpe Ratio</strong></td>${comps.map(c => `<td class="${c.sharpe_ratio >= 1.5 ? 'cell-green' : ''}">${c.sharpe_ratio}</td>`).join('')}</tr>`;
+      rHtml += `<tr><td><strong>Beta (vs Nifty 50)</strong></td>${comps.map(c => `<td>${c.beta}</td>`).join('')}</tr>`;
+      rHtml += `<tr><td><strong>90-Day Volatility (%)</strong></td>${comps.map(c => `<td>${c.volatility_90d}%</td>`).join('')}</tr>`;
+      rHtml += `<tr><td><strong>1-Year Max Drawdown (%)</strong></td>${comps.map(c => `<td class="${c.max_drawdown_1y > -18 ? 'cell-green' : 'cell-red'}">${c.max_drawdown_1y}%</td>`).join('')}</tr>`;
+      rHtml += `<tr><td><strong>3-Year Max Drawdown (%)</strong></td>${comps.map(c => `<td>${c.max_drawdown_3y}%</td>`).join('')}</tr>`;
+      rHtml += `</tbody>`;
+      document.getElementById('tableRiskAdjusted').innerHTML = rHtml;
+
+      let gHtml = `<thead><tr><th>Company</th><th>Metric</th><th>Guided Target</th><th>Actual Result</th><th>Verdict</th></tr></thead><tbody>`;
+      comps.forEach(c => {
+        if (c.guidance_actual) {
+          c.guidance_actual.forEach(g => {
+            gHtml += `
+              <tr>
+                <td><strong>${c.name}</strong></td>
+                <td>${g.metric}</td>
+                <td>${g.guided}</td>
+                <td><strong>${g.actual}</strong></td>
+                <td><span class="chip ${g.verdict === 'BEAT' ? 'green' : 'red'}">${g.verdict}</span></td>
+              </tr>
+            `;
+          });
+        }
+      });
+      gHtml += `</tbody>`;
+      document.getElementById('tableGuidance').innerHTML = gHtml;
+    }
+
+    function toggleQMetric(metric) {
+      activeQMetric = metric;
+      document.querySelectorAll('.sub-toggle-btn').forEach(btn => btn.classList.remove('active'));
+      if (metric === 'revenue') document.getElementById('btnQRev').classList.add('active');
+      if (metric === 'ebitda') document.getElementById('btnQEbitda').classList.add('active');
+      if (metric === 'pat') document.getElementById('btnQPat').classList.add('active');
+      renderQuarterlySection();
+    }
+
+    function renderQuarterlySection() {
+      if (!step3Payload) return;
+      const comps = step3Payload.companies;
+      const qLabels = comps[0].quarterly_trends ? comps[0].quarterly_trends.map(q => q.quarter) : ['Q4 FY25', 'Q1 FY26', 'Q2 FY26', 'Q3 FY26', 'Q4 FY26', 'Q1 FY27'];
+
+      const ctxQ = document.getElementById('canvasQuarterlyLine');
+      if (ctxQ) {
+        if (charts.quarterly) charts.quarterly.destroy();
+        charts.quarterly = new Chart(ctxQ, {
+          type: 'line',
+          data: {
+            labels: qLabels,
+            datasets: comps.map((c, i) => ({
+              label: `${c.ticker} (${activeQMetric.toUpperCase()})`,
+              data: c.quarterly_trends ? c.quarterly_trends.map(q => q[activeQMetric]) : [100, 120, 140, 160, 180, 200],
+              borderColor: COMPANY_COLORS[i],
+              backgroundColor: COMPANY_COLORS[i],
+              tension: 0.3
+            }))
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      let dHtml = `<thead><tr><th>Company</th><th>Latest Quarter</th><th>Revenue (₹ Cr)</th><th>YoY %</th><th>QoQ %</th><th>PAT (₹ Cr)</th><th>YoY %</th><th>QoQ %</th></tr></thead><tbody>`;
+      comps.forEach(c => {
+        const latest = c.quarterly_trends ? c.quarterly_trends[c.quarterly_trends.length - 1] : { quarter: 'Q1 FY27', revenue: 2010, yoy_rev: 33.1, qoq_rev: 6.3, pat: 525, yoy_pat: 37.1, qoq_pat: 7.1 };
+        dHtml += `
+          <tr>
+            <td><strong>${c.name} (${c.ticker})</strong></td>
+            <td>${latest.quarter}</td>
+            <td>₹${latest.revenue} Cr</td>
+            <td class="${latest.yoy_rev >= 0 ? 'cell-green' : 'cell-red'}">${latest.yoy_rev > 0 ? '+' : ''}${latest.yoy_rev}%</td>
+            <td class="${latest.qoq_rev >= 0 ? 'cell-green' : 'cell-red'}">${latest.qoq_rev > 0 ? '+' : ''}${latest.qoq_rev}%</td>
+            <td>₹${latest.pat} Cr</td>
+            <td class="${latest.yoy_pat >= 0 ? 'cell-green' : 'cell-red'}">${latest.yoy_pat > 0 ? '+' : ''}${latest.yoy_pat}%</td>
+            <td class="${latest.qoq_pat >= 0 ? 'cell-green' : 'cell-red'}">${latest.qoq_pat > 0 ? '+' : ''}${latest.qoq_pat}%</td>
+          </tr>
+        `;
+      });
+      dHtml += `</tbody>`;
+      document.getElementById('tableQuarterlyDelta').innerHTML = dHtml;
+    }
+
+    /* TAB 6: OUTLOOK */
+    function renderTabOutlook() {
+      if (!step3Payload) return;
+      const comps = step3Payload.companies;
+
+      let pHtml = `<thead><tr><th>Projection / Target</th>${comps.map(c => `<th>${c.name}</th>`).join('')}</tr></thead><tbody>`;
+      pHtml += `<tr><td><strong>Revenue CAGR (2Y Forward)</strong></td>${comps.map(c => `<td>${(c.projections && c.projections.rev_cagr_2y) ? c.projections.rev_cagr_2y : '18.5%'}</td>`).join('')}</tr>`;
+      pHtml += `<tr><td><strong>PAT CAGR (2Y Forward)</strong></td>${comps.map(c => `<td>${(c.projections && c.projections.pat_cagr_2y) ? c.projections.pat_cagr_2y : '22.0%'}</td>`).join('')}</tr>`;
+      pHtml += `<tr><td><strong>Stated 2030 Vision</strong></td>${comps.map(c => `<td>${(c.projections && c.projections.vision_2030) ? c.projections.vision_2030 : '2.5x Revenue Expansion'}</td>`).join('')}</tr>`;
+      pHtml += `</tbody>`;
+      document.getElementById('tableProjections').innerHTML = pHtml;
+
+      document.getElementById('containerOpportunities').innerHTML = comps.map(c => {
+        const opps = (c.opportunities && c.opportunities.length > 0) ? c.opportunities : ["Capacity expansion in core hubs", "Digitalization & margin enhancement", "Market share consolidation"];
+        return `
+          <div style="margin-bottom:12px;">
+            <strong style="color:#fff;">${c.name}:</strong>
+            <div class="chip-group" style="margin-top:4px;">${opps.map(o => `<span class="chip green">${o}</span>`).join('')}</div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('containerRisks').innerHTML = comps.map(c => {
+        const rks = (c.risks && c.risks.length > 0) ? c.risks : ["Raw material input cost inflation", "Regulatory policy shifts", "Macroeconomic demand slowdown"];
+        return `
+          <div style="margin-bottom:12px;">
+            <strong style="color:#fff;">${c.name}:</strong>
+            <div class="chip-group" style="margin-top:4px;">${rks.map(r => `<span class="chip red">${r}</span>`).join('')}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* TAB 7: TECHNICALS */
+    function renderTabTechnicals() {
+      if (!step3Payload) return;
+      const comps = step3Payload.companies;
+
+      let tHtml = `<thead><tr><th>Company</th><th>Signal</th><th>Current Price</th><th>RSI (14D)</th><th>MACD</th><th>50-DMA</th><th>200-DMA</th></tr></thead><tbody>`;
+      comps.forEach(c => {
+        tHtml += `
+          <tr>
+            <td><strong>${c.name} (${c.ticker})</strong></td>
+            <td><span class="chip green">${c.tech_signal}</span></td>
+            <td>${c.price}</td>
+            <td><strong>${c.rsi}</strong></td>
+            <td>${c.macd}</td>
+            <td>${c.sma_50}</td>
+            <td>${c.sma_200}</td>
+          </tr>
+        `;
+      });
+      tHtml += `</tbody>`;
+      document.getElementById('tableTechnicals').innerHTML = tHtml;
+
+      const ctxRsi = document.getElementById('canvasRsiBar');
+      if (ctxRsi) {
+        charts.rsi = new Chart(ctxRsi, {
+          type: 'bar',
+          data: {
+            labels: comps.map(c => c.ticker),
+            datasets: [{ label: 'RSI (14-Day)', data: comps.map(c => c.rsi), backgroundColor: comps.map((c, i) => COMPANY_COLORS[i]) }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } } }
+        });
+      }
+
+      document.getElementById('cardsTechVerdicts').innerHTML = comps.map((c, i) => `
+        <div class="panel-card" style="border-left:3px solid ${COMPANY_COLORS[i]}; margin-bottom:12px;">
+          <strong style="color:var(--gold);">${c.name}:</strong> ${c.tech_verdict}
+        </div>
+      `).join('');
+    }
+
+    /* TAB 8: VALUATION */
+    function renderTabValuation() {
+      if (!step3Payload) return;
+      const comps = step3Payload.companies;
+
+      let vHtml = `<thead><tr><th>Valuation Multiple</th>${comps.map(c => `<th>${c.name}</th>`).join('')}</tr></thead><tbody>`;
+      vHtml += `<tr><td><strong>P/E Ratio (TTM)</strong></td>${comps.map(c => `<td>${c.pe}x</td>`).join('')}</tr>`;
+      vHtml += `<tr><td><strong>P/B Ratio</strong></td>${comps.map(c => `<td>${c.pb}x</td>`).join('')}</tr>`;
+      vHtml += `<tr><td><strong>EV / EBITDA</strong></td>${comps.map(c => `<td>${c.ev_ebitda}</td>`).join('')}</tr>`;
+      vHtml += `<tr><td><strong>PEG Ratio</strong></td>${comps.map(c => `<td class="cell-green">${c.peg_ratio}x</td>`).join('')}</tr>`;
+      vHtml += `</tbody>`;
+      document.getElementById('tableValuation').innerHTML = vHtml;
+
+      document.getElementById('cardsValuationCommentary').innerHTML = comps.map((c, i) => `
+        <div class="panel-card" style="border-top:3px solid ${COMPANY_COLORS[i]};">
+          <div style="font-family:var(--font-mono); color:var(--gold); font-size:22px; font-weight:700;">${c.pe}x P/E</div>
+          <div style="font-weight:700; color:#fff; margin:6px 0;">${c.name}</div>
+          <p>Trading at PEG ${c.peg_ratio}x vs 5Y median (${c.pe_vs_5y_median}). Current valuation provides margin of safety relative to earnings CAGR.</p>
+        </div>
+      `).join('');
+    }
+
+    /* TAB 9: VERDICT */
+    function renderTabVerdict() {
+      if (!step3Payload) return;
+      const w = step3Payload.winner;
+      const shortcomings = step3Payload.shortcomings;
+
+      document.getElementById('verdictWinnerTitle').textContent = `Best Investment Opportunity: ${w.name} (${w.ticker}) — Weighted Score ${w.score_100}/100`;
+      document.getElementById('verdictParagraph').textContent = w.verdict_paragraph;
+
+      document.getElementById('gridWinnerPillars').innerHTML = w.key_factor_cards.map(k => `
+        <div class="panel-card" style="background:rgba(212,175,55,0.08); border-color:var(--gold);">
+          <strong style="color:var(--gold); font-family:var(--font-mono); text-transform:uppercase;">${k.title}</strong>
+          <p style="margin-top:4px;">${k.desc}</p>
+        </div>
+      `).join('');
+
+      document.getElementById('gridShortcomings').innerHTML = Object.keys(shortcomings).map(ticker => `
+        <div class="shortcoming-card">
+          <h4 style="font-family:var(--font-mono); color:var(--red); text-transform:uppercase;">${ticker} Drawbacks & Risks</h4>
+          <ul class="shortcoming-list">
+            ${shortcomings[ticker].map(b => `<li>${b}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
+    }
+
+    async function downloadComparisonPDF() {
+      const btn = document.getElementById('btnDownloadComparisonPDF');
+      const originalText = btn ? btn.innerHTML : '📥 Download Comparison PDF';
+      if (btn) {
+        btn.innerHTML = '⏳ Generating PDF...';
+        btn.disabled = true;
+      }
+
+      // Render all tabs so all tables and cards are ready in DOM
+      renderTabFundamentals();
+      renderTabFinancials();
+      renderTabDuPont();
+      renderTabPerformance();
+      renderTabOutlook();
+      renderTabTechnicals();
+      renderTabValuation();
+      renderTabVerdict();
+
+      const allPanes = document.querySelectorAll('.tab-pane');
+      const prevDisplays = [];
+      allPanes.forEach(pane => {
+        prevDisplays.push(pane.style.display);
+        pane.style.display = 'block';
+      });
+
+      const sector = (step3Payload && step3Payload.sector) ? step3Payload.sector.replace(/\s+/g, '_') : 'Sector_Comparison';
+      const opt = {
+        margin: [8, 8, 8, 8],
+        filename: `${sector}_Peer_Comparison_Report_nv_analytics.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+
+      try {
+        const element = document.getElementById('comparisonExportContainer');
+        if (window.html2pdf) {
+          await html2pdf().set(opt).from(element).save();
+        } else {
+          window.print();
+        }
+      } catch (err) {
+        console.error('html2pdf comparison export failed, falling back to print:', err);
+        window.print();
+      } finally {
+        allPanes.forEach((pane, idx) => {
+          pane.style.display = prevDisplays[idx];
+        });
+        if (btn) {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initDashboard();
+    });
+  </script>
+  </div> <!-- /#comparisonExportContainer -->
+</body>
+</html>

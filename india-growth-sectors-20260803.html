@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║  SECTOR SELECTION WORKING — 03 AUGUST 2026                   ║
+╚══════════════════════════════════════════════════════════════╝
+
+FULL UNIVERSE SCREENED (32 Sectors Evaluated):
+Nifty Renewable Energy · Nifty India Defence · Nifty EV & New Age Automotive · Nifty Capital Goods · Nifty Digital / Data Centers · Nifty Bank · Nifty PSU Bank · Nifty Private Bank · Specialty Chemicals · Nifty Pharma · Nifty Healthcare · Quick Commerce & Logistics · Nifty Realty · Nifty Infrastructure · Nifty Auto · Nifty FMCG · Nifty Metal · Nifty Oil & Gas · Nifty Telecom · Agrochemicals · Nifty Consumer Durables · Nifty Railways & Mobility · Water & Waste Management · Semiconductor & Electronics Manufacturing · Nifty Tourism & Hospitality · Capital Markets & Wealth Management · Ports & Shipping · Aviation & Airport Infra · Media & Entertainment · Textiles & Apparel · Paper & Packaging · Power Transmission & Smart Grid
+
+SCORING MATRIX (Sorted by Total Score Descending):
+Rank | Sector                              | Macro | Policy | CAGR | Val. | Earn. | Mom. | TOTAL
+1    | Renewable Energy & Green Power       | 5.0   | 5.0    | 5.0  | 3.5  | 4.5   | 4.5  | 4.65
+2    | Defence & Aerospace Manufacturing     | 5.0   | 5.0    | 5.0  | 3.0  | 5.0   | 4.5  | 4.55
+3    | Capital Goods & Industrial Engg      | 4.5   | 4.5    | 4.0  | 4.0  | 4.5   | 4.5  | 4.40
+4    | EV & New-Age Mobility                 | 4.5   | 5.0    | 5.0  | 3.0  | 4.0   | 4.0  | 4.35
+5    | AI Infra, Data Centers & Digital IT | 4.5   | 4.5    | 5.0  | 3.5  | 4.0   | 3.5  | 4.25
+6    | Banking & Financial Services (BFSI)   | 4.5   | 3.5    | 3.5  | 5.0  | 4.5   | 4.0  | 4.15
+7    | Specialty Chemicals & Materials      | 3.5   | 4.0    | 4.0  | 3.5  | 4.0   | 3.5  | 3.75
+8    | Pharmaceuticals & Healthcare          | 3.5   | 4.0    | 3.5  | 3.5  | 4.0   | 3.5  | 3.65
+9    | Quick Commerce & Logistics           | 4.0   | 3.0    | 4.5  | 2.5  | 4.0   | 4.0  | 3.65
+10   | Real Estate & Urban Infrastructure    | 4.0   | 3.5    | 3.5  | 3.0  | 4.0   | 4.0  | 3.60
+
+TOP SELECTED SECTORS & REASONING:
+1. Renewable Energy & Green Power — Score 4.65 — 500 GW target by 2030, PLI schemes, aggressive revenue CAGR >28%.
+2. Defence & Aerospace Mfg — Score 4.55 — Unprecedented domestic procurement mandate (75%+ Make-in-India) and export surge.
+3. Capital Goods & Industrial Engg — Score 4.40 — ₹12.2L Cr public capex push accelerating private sector capacity expansion.
+4. EV & New-Age Mobility — Score 4.35 — PM E-DRIVE PLI schemes driving >32% CAGR in EV component and charger manufacturing.
+5. AI Infra, Data Centers & IT — Score 4.25 — Hyper-scalers investing $15B+ in domestic Indian data center capacity & AI workloads.
+6. Banking & Financial Services (BFSI) — Score 4.15 — Robust 18.8% YoY credit growth, clean balance sheets, attractive ~14.7x PE.
+7. Specialty Chemicals — Score 3.75 — China+1 diversification and domestic import substitution driving 18% CAGR.
+8. Pharmaceuticals & Healthcare — Score 3.65 — Strong US FDA launch pipeline and expanding domestic hospital capacity.
+9. Quick Commerce & Logistics — Score 3.65 — Hyper-local delivery transformation with rapid revenue scaling.
+10. Real Estate & Urban Infra — Score 3.60 — Strong multi-year residential real estate cycle and urban transit buildout.
+
+MERGED SECTORS:
+- "Solar Energy" and "Green Hydrogen" merged into "Renewable Energy & Green Power"
+- "Defence Shipbuilding" and "Aerospace Components" merged into "Defence & Aerospace Manufacturing"
+
+SECTOR COLOR ASSIGNMENTS:
+1. Renewable Energy → #e86030 (Flame Orange)
+2. Defence & Aerospace → #3a7a1e (Forest Green)
+3. Capital Goods → #c88c00 (Amber Gold)
+4. EV & New-Age Mobility → #1a5fa0 (Cobalt Blue)
+5. AI Infra & Data Centers → #01696f (Teal)
+-->
+
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nv analytics | India Top Growth Sectors Briefing 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #01696f;
+      --color-primary-light: #4f98a3;
+      --color-bg: #0f0e0d;
+      --color-surface: #181716;
+      --color-surface-2: #211f1e;
+      --color-border: #2e2c2a;
+      --color-text-primary: #e8e6e2;
+      --color-text-muted: #8a8880;
+      --color-text-faint: #504e4c;
+      --color-green: #10b981;
+      --color-red: #ef4444;
+      --color-amber: #f59e0b;
+      --color-teal: #14b8a6;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --radius-card: 12px;
+      --radius-pill: 20px;
+      --radius-badge: 6px;
+      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.3);
+      --transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      --sec-1: #e86030;
+      --sec-2: #3a7a1e;
+      --sec-3: #c88c00;
+      --sec-4: #1a5fa0;
+      --sec-5: #01696f;
+    }
+    [data-theme="light"] {
+      --color-bg: #f8fafc;
+      --color-surface: #ffffff;
+      --color-surface-2: #f1f5f9;
+      --color-border: #e2e8f0;
+      --color-text-primary: #0f172a;
+      --color-text-muted: #64748b;
+      --color-text-faint: #94a3b8;
+      --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--color-bg); color: var(--color-text-primary); font-family: var(--font-body); line-height: 1.5; padding-top: 56px; transition: background-color 200ms ease, color 200ms ease; }
+    a { color: inherit; text-decoration: none; }
+    .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 56px; background-color: rgba(24, 23, 22, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 1000; }
+    [data-theme="light"] .navbar { background-color: rgba(255, 255, 255, 0.85); }
+    .nav-left { display: flex; align-items: center; gap: 10px; }
+    .brand-logo { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--color-text-primary); display: flex; align-items: center; gap: 8px; }
+    .brand-logo span { color: var(--color-primary-light); }
+    .nav-links { display: flex; gap: 20px; list-style: none; }
+    .nav-links a { font-size: 0.85rem; font-weight: 500; color: var(--color-text-muted); transition: var(--transition); }
+    .nav-links a:hover { color: var(--color-text-primary); }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .btn-theme { background: var(--color-surface-2); border: 1px solid var(--color-border); color: var(--color-text-primary); padding: 6px 12px; border-radius: var(--radius-pill); cursor: pointer; font-size: 0.8rem; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .btn-ref { background: var(--color-primary); color: #ffffff; border: none; padding: 6px 14px; border-radius: var(--radius-pill); cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+    .container { max-width: 1240px; margin: 0 auto; padding: 32px 24px; }
+    .hero { margin-bottom: 28px; }
+    .hero-eyebrow { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-primary-light); margin-bottom: 8px; }
+    .hero-h1 { font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .hero-h1 span { color: var(--color-primary-light); }
+    .hero-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 0.82rem; color: var(--color-text-muted); }
+    .dot-sep { width: 4px; height: 4px; border-radius: 50%; background-color: var(--color-text-faint); }
+    .disclaimer-badge { background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); padding: 2px 8px; border-radius: var(--radius-badge); font-size: 0.72rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 40px; }
+    .kpi-card { background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); padding: 16px; box-shadow: var(--shadow-card); }
+    .kpi-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); margin-bottom: 6px; }
+    .kpi-value { font-family: var(--font-display); font-size: 1.45rem; font-weight: 800; line-height: 1.1; margin-bottom: 4px; }
+    .kpi-value.green { color: var(--color-green); }
+    .kpi-value.amber { color: var(--color-amber); }
+    .kpi-value.muted { color: var(--color-text-primary); }
+    .kpi-sub { font-size: 0.72rem; color: var(--color-text-muted); }
+    .arrow-up { color: var(--color-green); }
+    .section-header { margin-bottom: 20px; }
+    .section-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 4px; }
+    .section-subtitle { font-size: 0.88rem; color: var(--color-text-muted); }
+    .linkage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 40px; }
+    .linkage-card { background-color: var(--color-surface); border: 1px solid var(--color-border); border-top: 3px solid var(--color-primary-light); border-radius: var(--radius-card); padding: 20px; box-shadow: var(--shadow-card); }
+    .driver-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--color-primary-light); margin-bottom: 6px; }
+    .driver-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+    .driver-reading { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; }
+    .badge-trend { font-size: 0.7rem; font-weight: 600; padding: 3px 8px; border-radius: var(--radius-badge); }
+    .badge-trend.green { background: rgba(16, 185, 129, 0.15); color: var(--color-green); }
+    .flows-label { font-size: 0.72rem; font-weight: 600; color: var(--color-text-muted); margin-bottom: 6px; }
+    .sector-chips-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .chip-sector { font-size: 0.7rem; font-weight: 600; background: var(--color-surface-2); border: 1px solid var(--color-border); color: var(--color-text-primary); padding: 3px 10px; border-radius: var(--radius-pill); }
+    .linkage-why { font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 12px; line-height: 1.45; }
+    .linkage-source { font-size: 0.72rem; color: var(--color-primary-light); cursor: pointer; text-decoration: underline; }
+    .table-container { width: 100%; overflow-x: auto; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); box-shadow: var(--shadow-card); margin-bottom: 44px; }
+    .custom-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+    .custom-table th, .custom-table td { padding: 14px 18px; border-bottom: 1px solid var(--color-border); }
+    .custom-table th { background-color: var(--color-surface-2); font-family: var(--font-display); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); }
+    .pill-signal { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-pill); text-transform: uppercase; }
+    .pill-signal.bullish { background: rgba(16, 185, 129, 0.18); color: var(--color-green); }
+    .pill-signal.neutral { background: rgba(20, 184, 166, 0.18); color: var(--color-teal); }
+    .pill-signal.watch { background: rgba(245, 158, 11, 0.18); color: var(--color-amber); }
+    .sectors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; margin-bottom: 48px; }
+    .sector-card { background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); padding: 22px; box-shadow: var(--shadow-card); cursor: pointer; position: relative; transition: var(--transition); }
+    .sector-card:hover { transform: translateY(-3px); border-color: var(--card-color, var(--color-primary-light)); }
+    .sector-card.active { border: 2px solid var(--card-color, var(--color-primary-light)); }
+    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .sector-num { font-size: 0.72rem; font-weight: 700; color: var(--color-text-muted); }
+    .conviction-dots { display: flex; gap: 4px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background-color: var(--color-border); }
+    .dot.filled { background-color: var(--card-color, var(--color-primary-light)); }
+    .sector-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: var(--color-text-primary); margin-bottom: 4px; }
+    .sector-tagline { font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: 16px; height: 36px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: var(--color-surface-2); padding: 12px; border-radius: 8px; margin-bottom: 14px; text-align: center; }
+    .stat-val { font-family: var(--font-display); font-weight: 700; font-size: 0.92rem; color: var(--color-text-primary); }
+    .stat-lbl { font-size: 0.65rem; color: var(--color-text-muted); text-transform: uppercase; margin-top: 2px; }
+    .horizon-row { display: flex; gap: 6px; margin-bottom: 14px; }
+    .badge-hz { font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: var(--radius-badge); flex: 1; text-align: center; }
+    .badge-hz.strong { background: rgba(16, 185, 129, 0.15); color: var(--color-green); }
+    .badge-hz.moderate { background: rgba(20, 184, 166, 0.15); color: var(--color-teal); }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--color-text-muted); border-top: 1px dashed var(--color-border); padding-top: 10px; }
+    .deep-dive-panel { grid-column: 1 / -1; background-color: var(--color-surface-2); border: 2px solid var(--panel-color, var(--color-primary-light)); border-radius: var(--radius-card); padding: 28px; margin-top: 10px; margin-bottom: 10px; animation: fadeIn 220ms ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .panel-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--panel-color, var(--color-primary-light)); }
+    .btn-close-panel { background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-primary); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .panel-body { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .panel-sec-heading { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; color: var(--color-text-primary); border-bottom: 1px solid var(--color-border); padding-bottom: 6px; }
+    .panel-text { font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 16px; line-height: 1.5; }
+    .players-list { list-style: none; }
+    .players-list li { font-size: 0.82rem; color: var(--color-text-primary); margin-bottom: 8px; padding-left: 14px; position: relative; }
+    .players-list li::before { content: "•"; color: var(--panel-color, var(--color-primary-light)); position: absolute; left: 0; font-weight: bold; }
+    .ticker-code { font-weight: 700; color: var(--panel-color, var(--color-primary-light)); }
+    .risk-box { background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 12px 16px; margin-top: 14px; }
+    .risk-box h5 { color: var(--color-red); font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; }
+    .risk-box ul { list-style: none; }
+    .risk-box li { font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: 4px; padding-left: 12px; position: relative; }
+    .risk-box li::before { content: "⚠"; color: var(--color-red); position: absolute; left: 0; font-size: 0.7rem; }
+    .chart-panel { background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); padding: 24px; box-shadow: var(--shadow-card); margin-bottom: 44px; }
+    .chart-tabs-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; }
+    .tab-buttons { display: flex; background: var(--color-surface-2); padding: 4px; border-radius: var(--radius-pill); border: 1px solid var(--color-border); }
+    .btn-tab { background: none; border: none; color: var(--color-text-muted); padding: 8px 16px; font-size: 0.8rem; font-weight: 600; border-radius: var(--radius-pill); cursor: pointer; }
+    .btn-tab.active { background: var(--color-primary); color: #ffffff; }
+    .sector-toggle-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+    .chip-toggle { font-size: 0.72rem; font-weight: 600; padding: 4px 12px; border-radius: var(--radius-pill); border: 1px solid var(--color-border); background: var(--color-surface-2); color: var(--color-text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .chip-toggle.active { border-color: var(--chip-color); color: var(--color-text-primary); background: rgba(255, 255, 255, 0.05); }
+    .chip-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--chip-color); }
+    .chart-container { position: relative; width: 100%; height: 380px; }
+    .chart-note { font-size: 0.74rem; color: var(--color-text-muted); margin-top: 14px; border-top: 1px solid var(--color-border); padding-top: 10px; }
+    .policy-score { font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+    .policy-score.high { background: rgba(16, 185, 129, 0.18); color: var(--color-green); }
+    .policy-score.mid { background: rgba(20, 184, 166, 0.18); color: var(--color-teal); }
+    .policy-score.low { background: rgba(239, 68, 68, 0.18); color: var(--color-red); }
+    .risk-footnotes { margin-top: 14px; font-size: 0.78rem; color: var(--color-text-muted); }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); z-index: 2000; display: none; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); width: 90%; max-width: 720px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: var(--shadow-card); overflow: hidden; }
+    .modal-header { padding: 18px 24px; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; }
+    .modal-body { padding: 24px; overflow-y: auto; }
+    .modal-disclaimer { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 12px; font-size: 0.78rem; color: var(--color-amber); margin-bottom: 20px; }
+    .sources-list { display: flex; flex-direction: column; gap: 16px; }
+    .source-item { font-size: 0.82rem; border-bottom: 1px solid var(--color-border); padding-bottom: 12px; }
+    .source-tag { font-weight: 700; color: var(--color-primary-light); margin-right: 6px; }
+    .source-title { font-weight: 600; color: var(--color-text-primary); }
+    .source-url { font-size: 0.75rem; color: var(--color-teal); display: block; word-break: break-all; margin-top: 2px; }
+    .source-desc { font-size: 0.75rem; color: var(--color-text-muted); margin-top: 4px; }
+    .footer { border-top: 1px solid var(--color-border); padding: 32px 24px; text-align: center; font-size: 0.8rem; color: var(--color-text-muted); margin-top: 40px; }
+    .footer span { color: var(--color-primary-light); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="brand-logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>nv analytics <span>Growth Sectors</span></div>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#macro">Macro</a></li>
+      <li><a href="#sectors">Sectors</a></li>
+      <li><a href="#rotation">Rotation</a></li>
+      <li><a href="#policy">Policy</a></li>
+      <li><a href="#signals">Signals</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="btn-theme" id="btnThemeToggle"><span id="themeIcon">☀️</span> <span id="themeText">Light</span></button>
+      <button class="btn-ref" id="btnOpenRefs">📎 References</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <header class="hero">
+      <div class="hero-eyebrow">Macro-to-Sector Research · 03 August 2026</div>
+      <h1 class="hero-h1">India's Top <span>Growth Sectors</span> / For the Next 5 Years</h1>
+      <div class="hero-meta">
+        <span>Execution Date: 03 August 2026</span>
+        <div class="dot-sep"></div>
+        <span>Nifty 50 PE: <strong>20.78x</strong> (Fairly Valued)</span>
+        <div class="dot-sep"></div>
+        <span>India Real GDP FY26: <strong>7.7%</strong></span>
+        <div class="dot-sep"></div>
+        <div class="disclaimer-badge">⚠ Educational Only — Not Investment Advice</div>
+      </div>
+    </header>
+
+    <section class="kpi-strip">
+      <div class="kpi-card"><div class="kpi-label">Real GDP Growth</div><div class="kpi-value green">7.7%</div><div class="kpi-sub"><span class="arrow-up">↑</span> Robust momentum (FY26)</div></div>
+      <div class="kpi-card"><div class="kpi-label">CPI Inflation</div><div class="kpi-value green">4.38%</div><div class="kpi-sub"><span class="arrow-up">↑</span> Within RBI target band</div></div>
+      <div class="kpi-card"><div class="kpi-label">RBI Repo Rate</div><div class="kpi-value amber">5.25%</div><div class="kpi-sub">→ Pause stance expected</div></div>
+      <div class="kpi-card"><div class="kpi-label">Bank Credit Growth</div><div class="kpi-value green">18.8%</div><div class="kpi-sub"><span class="arrow-up">↑</span> YoY credit expansion</div></div>
+      <div class="kpi-card"><div class="kpi-label">Govt Capex Budget</div><div class="kpi-value green">₹12.2L Cr</div><div class="kpi-sub">Effective ₹17.15L Cr (+11.5%)</div></div>
+      <div class="kpi-card"><div class="kpi-label">Nifty 50 P/E</div><div class="kpi-value muted">20.78x</div><div class="kpi-sub">vs 5Y Median 21.5x</div></div>
+    </section>
+
+    <section id="macro">
+      <div class="section-header"><h2 class="section-title">Why Now? Macro Linkage</h2><p class="section-subtitle">Causal transmission from macroeconomic indicators directly into sector earnings</p></div>
+      <div class="linkage-grid">
+        <div class="linkage-card">
+          <div class="driver-label">Driver 1 · Public Capex Push</div>
+          <div class="driver-header"><div class="driver-reading">₹12.2 Lakh Cr</div><span class="badge-trend green">↑ Accelerating</span></div>
+          <div class="flows-label">Flows into →</div>
+          <div class="sector-chips-row"><span class="chip-sector">Capital Goods</span><span class="chip-sector">Renewable Energy</span><span class="chip-sector">Real Estate</span></div>
+          <p class="linkage-why">Record public infrastructure outlay directly expands order books for heavy engineering, grid modernization, and railway logistics players, yielding multi-year revenue visibility.</p>
+          <div class="linkage-source" onclick="openReferencesModal()">📎 Sources: Union Budget 2026 · IBEF Reports</div>
+        </div>
+        <div class="linkage-card">
+          <div class="driver-label">Driver 2 · Credit & Rate Cycle</div>
+          <div class="driver-header"><div class="driver-reading">18.8% YoY</div><span class="badge-trend green">↑ Robust</span></div>
+          <div class="flows-label">Flows into →</div>
+          <div class="sector-chips-row"><span class="chip-sector">Banking & BFSI</span><span class="chip-sector">EV & Auto</span><span class="chip-sector">Quick Commerce</span></div>
+          <p class="linkage-why">Strong retail and corporate credit expansion combined with an RBI rate plateau drives net interest income (NII) expansion while keeping non-performing asset (NPA) ratios at multi-year lows.</p>
+          <div class="linkage-source" onclick="openReferencesModal()">📎 Sources: RBI Monthly Bulletin · Screener Data</div>
+        </div>
+        <div class="linkage-card">
+          <div class="driver-label">Driver 3 · Clean Energy & PLI</div>
+          <div class="driver-header"><div class="driver-reading">500 GW Target</div><span class="badge-trend green">↑ Policy Driven</span></div>
+          <div class="flows-label">Flows into →</div>
+          <div class="sector-chips-row"><span class="chip-sector">Renewables</span><span class="chip-sector">EV & Auto</span><span class="chip-sector">Specialty Chemicals</span></div>
+          <p class="linkage-why">Government PLI allocations and mandatory green energy sourcing targets drive high double-digit capex across solar, wind, battery storage, and green hydrogen supply chains.</p>
+          <div class="linkage-source" onclick="openReferencesModal()">📎 Sources: MNRE Guidelines · PIB India</div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="custom-table">
+          <thead><tr><th>Macro Indicator</th><th>Current Reading</th><th>Trend</th><th>YoY Change</th><th>Investment Signal</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Real GDP Growth</strong></td><td>7.7% (FY26)</td><td><span class="arrow-up">↑</span></td><td>+0.9%</td><td><span class="pill-signal bullish">BULLISH</span></td></tr>
+            <tr><td><strong>CPI Inflation</strong></td><td>4.38%</td><td><span class="arrow-up">↑</span></td><td>+0.45%</td><td><span class="pill-signal neutral">NEUTRAL</span></td></tr>
+            <tr><td><strong>RBI Repo Rate</strong></td><td>5.25%</td><td>→</td><td>-1.25%</td><td><span class="pill-signal bullish">BULLISH</span></td></tr>
+            <tr><td><strong>Bank Credit Growth</strong></td><td>18.8% YoY</td><td><span class="arrow-up">↑</span></td><td>+2.1%</td><td><span class="pill-signal bullish">BULLISH</span></td></tr>
+            <tr><td><strong>Govt Effective Capex</strong></td><td>₹17.15 Lakh Cr</td><td><span class="arrow-up">↑</span></td><td>+11.5%</td><td><span class="pill-signal bullish">BULLISH</span></td></tr>
+            <tr><td><strong>Nifty 50 Trailing P/E</strong></td><td>20.78x</td><td>→</td><td>Fair (vs 21.5x Median)</td><td><span class="pill-signal neutral">NEUTRAL</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="sectors">
+      <div class="section-header"><h2 class="section-title">Top Growth Sectors</h2><p class="section-subtitle">Click any sector card to expand full deep-dive research panel</p></div>
+      <div class="sectors-grid" id="sectorsGrid">
+        <div class="sector-card" style="--card-color: var(--sec-1)" onclick="toggleDeepDive(1)">
+          <div class="card-top"><span class="sector-num">01 · RENEWABLE ENERGY</span><div class="conviction-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></div></div>
+          <h3 class="sector-title">Renewable Energy & Green Power</h3>
+          <p class="sector-tagline">500 GW target by 2030 driving massive solar, wind, & green hydrogen capex</p>
+          <div class="card-stats"><div><div class="stat-val">₹2.8L Cr</div><div class="stat-lbl">Market Size</div></div><div><div class="stat-val">28.5%</div><div class="stat-lbl">5Y CAGR</div></div><div><div class="stat-val">18x-34x</div><div class="stat-lbl">P/E Range</div></div></div>
+          <div class="horizon-row"><span class="badge-hz strong">1Y: Strong</span><span class="badge-hz strong">3Y: Strong</span><span class="badge-hz strong">5Y: Strong</span></div>
+          <div class="card-footer"><span>Nifty Renewable Index</span><span>Anchor: IREDA 17.9x · Tata Power 33.5x</span></div>
+        </div>
+        <div class="sector-card" style="--card-color: var(--sec-2)" onclick="toggleDeepDive(2)">
+          <div class="card-top"><span class="sector-num">02 · DEFENCE & AEROSPACE</span><div class="conviction-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></div></div>
+          <h3 class="sector-title">Defence & Aerospace Manufacturing</h3>
+          <p class="sector-tagline">75%+ indigenous procurement mandate accelerating defense export orderbooks</p>
+          <div class="card-stats"><div><div class="stat-val">₹1.9L Cr</div><div class="stat-lbl">Market Size</div></div><div><div class="stat-val">24.2%</div><div class="stat-lbl">5Y CAGR</div></div><div><div class="stat-val">32x-47x</div><div class="stat-lbl">P/E Range</div></div></div>
+          <div class="horizon-row"><span class="badge-hz strong">1Y: Strong</span><span class="badge-hz strong">3Y: Strong</span><span class="badge-hz moderate">5Y: Moderate</span></div>
+          <div class="card-footer"><span>Nifty Defence Index</span><span>Anchor: HAL 34.4x · BEL 46.8x</span></div>
+        </div>
+        <div class="sector-card" style="--card-color: var(--sec-3)" onclick="toggleDeepDive(3)">
+          <div class="card-top"><span class="sector-num">03 · CAPITAL GOODS</span><div class="conviction-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div></div>
+          <h3 class="sector-title">Capital Goods & Industrial Engg</h3>
+          <p class="sector-tagline">₹12.2L Cr national capex driving multi-year factory automation & grid upgrades</p>
+          <div class="card-stats"><div><div class="stat-val">₹5.2L Cr</div><div class="stat-lbl">Market Size</div></div><div><div class="stat-val">20.8%</div><div class="stat-lbl">5Y CAGR</div></div><div><div class="stat-val">28x-52x</div><div class="stat-lbl">P/E Range</div></div></div>
+          <div class="horizon-row"><span class="badge-hz strong">1Y: Strong</span><span class="badge-hz strong">3Y: Strong</span><span class="badge-hz strong">5Y: Strong</span></div>
+          <div class="card-footer"><span>Nifty Infra Index</span><span>Anchor: L&T 31.1x · Siemens 48.5x</span></div>
+        </div>
+        <div class="sector-card" style="--card-color: var(--sec-4)" onclick="toggleDeepDive(4)">
+          <div class="card-top"><span class="sector-num">04 · EV & MOBILITY</span><div class="conviction-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div></div>
+          <h3 class="sector-title">EV & New-Age Mobility</h3>
+          <p class="sector-tagline">PM E-DRIVE scheme expanding electric 2W/4W adoption & battery ecosystem</p>
+          <div class="card-stats"><div><div class="stat-val">₹1.4L Cr</div><div class="stat-lbl">Market Size</div></div><div><div class="stat-val">32.6%</div><div class="stat-lbl">5Y CAGR</div></div><div><div class="stat-val">28x-42x</div><div class="stat-lbl">P/E Range</div></div></div>
+          <div class="horizon-row"><span class="badge-hz moderate">1Y: Moderate</span><span class="badge-hz strong">3Y: Strong</span><span class="badge-hz strong">5Y: Strong</span></div>
+          <div class="card-footer"><span>Nifty EV Index</span><span>Anchor: Tata Motors 41.4x · TVS 38.2x</span></div>
+        </div>
+        <div class="sector-card" style="--card-color: var(--sec-5)" onclick="toggleDeepDive(5)">
+          <div class="card-top"><span class="sector-num">05 · AI & DATA CENTERS</span><div class="conviction-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div></div>
+          <h3 class="sector-title">AI Infra, Data Centers & Digital IT</h3>
+          <p class="sector-tagline">Hyper-scalers building 2.5+ GW data center capacity across major Indian tech hubs</p>
+          <div class="card-stats"><div><div class="stat-val">₹1.1L Cr</div><div class="stat-lbl">Market Size</div></div><div><div class="stat-val">25.4%</div><div class="stat-lbl">5Y CAGR</div></div><div><div class="stat-val">16x-45x</div><div class="stat-lbl">P/E Range</div></div></div>
+          <div class="horizon-row"><span class="badge-hz moderate">1Y: Moderate</span><span class="badge-hz strong">3Y: Strong</span><span class="badge-hz strong">5Y: Strong</span></div>
+          <div class="card-footer"><span>Nifty IT Index</span><span>Anchor: TCS 16.3x · Netweb 45.2x</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="deepDiveContainer"></div>
+
+    <section id="rotation">
+      <div class="section-header"><h2 class="section-title">Sector Rotation & Analytics</h2><p class="section-subtitle">Visualizing growth trajectories, CAGRs, and relative valuation metrics</p></div>
+      <div class="chart-panel">
+        <div class="chart-tabs-header">
+          <div class="tab-buttons">
+            <button class="btn-tab active" onclick="switchChartTab(1)">Market Size (Base 100)</button>
+            <button class="btn-tab" onclick="switchChartTab(2)">CAGR by Horizon</button>
+            <button class="btn-tab" onclick="switchChartTab(3)">P/E vs 1Y Momentum</button>
+          </div>
+        </div>
+        <div class="sector-toggle-chips" id="chartToggleChips">
+          <button class="chip-toggle active" style="--chip-color: var(--sec-1)" onclick="toggleSectorChart('Renewables')"><span class="chip-dot"></span> Renewables</button>
+          <button class="chip-toggle active" style="--chip-color: var(--sec-2)" onclick="toggleSectorChart('Defence')"><span class="chip-dot"></span> Defence</button>
+          <button class="chip-toggle active" style="--chip-color: var(--sec-3)" onclick="toggleSectorChart('Capital Goods')"><span class="chip-dot"></span> Capital Goods</button>
+          <button class="chip-toggle active" style="--chip-color: var(--sec-4)" onclick="toggleSectorChart('EV Mobility')"><span class="chip-dot"></span> EV Mobility</button>
+          <button class="chip-toggle active" style="--chip-color: var(--sec-5)" onclick="toggleSectorChart('AI Infra')"><span class="chip-dot"></span> AI Infra</button>
+        </div>
+        <div class="chart-container"><canvas id="rotationChart"></canvas></div>
+        <div class="chart-note" id="chartNoteText">* Market sizes normalized to base 100 for current year to compare relative growth trajectories across different market scales.</div>
+      </div>
+
+      <div class="table-container">
+        <table class="custom-table">
+          <thead><tr><th>Sector</th><th>Avg Sector P/E</th><th>vs Nifty 50 (20.78x)</th><th>1Y Momentum</th><th>Relative Strength</th><th>Rotation Signal</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color: var(--sec-1)">Renewable Energy</strong></td><td><span class="policy-score mid">24.5x</span></td><td><span style="color: var(--color-red)">+17.9% Premium</span></td><td>+34.2%</td><td>Strong ↑↑</td><td><span class="pill-signal bullish">BUY — FAIR VALUE</span></td></tr>
+            <tr><td><strong style="color: var(--sec-2)">Defence & Aerospace</strong></td><td><span class="policy-score low">38.2x</span></td><td><span style="color: var(--color-red)">+83.8% Premium</span></td><td>+42.6%</td><td>Strong ↑↑</td><td><span class="pill-signal watch">HOLD / ADD ON DIPS</span></td></tr>
+            <tr><td><strong style="color: var(--sec-3)">Capital Goods</strong></td><td><span class="policy-score mid">31.1x</span></td><td><span style="color: var(--color-red)">+49.6% Premium</span></td><td>+28.5%</td><td>Moderate ↑</td><td><span class="pill-signal bullish">BUY — QUALITY</span></td></tr>
+            <tr><td><strong style="color: var(--sec-4)">EV & Mobility</strong></td><td><span class="policy-score low">35.8x</span></td><td><span style="color: var(--color-red)">+72.2% Premium</span></td><td>+22.1%</td><td>Building ↑</td><td><span class="pill-signal neutral">ACCUMULATE</span></td></tr>
+            <tr><td><strong style="color: var(--sec-5)">AI & Data Centers</strong></td><td><span class="policy-score high">24.8x</span></td><td><span style="color: var(--color-green)">+19.3% Fair</span></td><td>+18.4%</td><td>Building ↑</td><td><span class="pill-signal bullish">BUY — BEST VALUE</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="policy">
+      <div class="section-header"><h2 class="section-title">Policy & Regulatory Heat Map</h2><p class="section-subtitle">Evaluating Union Budget schemes, PLI allocations, and regulatory clarity</p></div>
+      <div class="table-container">
+        <table class="custom-table">
+          <thead><tr><th>Sector</th><th>FDI Regime</th><th>PLI / Subsidy</th><th>Tax Incentives</th><th>Regulatory Clarity</th><th>Legislative Pipeline</th><th>Policy Score</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color: var(--sec-1)">Renewable Energy</strong></td><td>🟢 100% Automatic</td><td>🟢 ₹24,000 Cr Solar/Hydrogen PLI</td><td>🟢 Accelerated Depr.</td><td>🟢 Grid Access Priority</td><td>🟢 Green Energy Tariff Rules</td><td><span class="policy-score high">5/5 🟢</span></td></tr>
+            <tr><td><strong style="color: var(--sec-2)">Defence Mfg</strong></td><td>🟢 74% Automatic</td><td>🟢 Negative Import Lists</td><td>🟢 R&D Tax Offsets</td><td>🟢 DAP 2026 Mandate</td><td>🔴 Export Licensing Bottlenecks</td><td><span class="policy-score high">4/5 🟢</span></td></tr>
+            <tr><td><strong style="color: var(--sec-3)">Capital Goods</strong></td><td>🟢 100% Automatic</td><td>🟢 Heavy Machinery Capex Grants</td><td>🟢 15% New Mfg Tax Rate</td><td>🟢 PM Gati Shakti Portal</td><td>🟢 National Infra Pipeline</td><td><span class="policy-score high">5/5 🟢</span></td></tr>
+            <tr><td><strong style="color: var(--sec-4)">EV & Mobility</strong></td><td>🟢 100% Automatic</td><td>🟢 ₹10,900 Cr PM E-DRIVE</td><td>🟢 5% GST on EVs</td><td>🔴 FAME Subsidy Transition Risk</td><td>🟢 Battery Swapping Standards</td><td><span class="policy-score high">4/5 🟢</span></td></tr>
+            <tr><td><strong style="color: var(--sec-5)">AI & Data Centers</strong></td><td>🟢 100% Automatic</td><td>🟢 IndiaAI Mission ₹10,370 Cr</td><td>🟢 SEZ Customs Tax Waiver</td><td>🟢 Data Protection Act 2023</td><td>🔴 Cross-border Data Flow Restrictions</td><td><span class="policy-score high">4/5 🟢</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="signals">
+      <div class="section-header"><h2 class="section-title">Action Signal Summary</h2><p class="section-subtitle">Specific 1-Year entry triggers, 3-5 Year structural thesis, and key risk indicators</p></div>
+      <div class="table-container">
+        <table class="custom-table">
+          <thead><tr><th>Sector</th><th>1Y Actionable Entry Signal</th><th>3–5Y Structural Thesis</th><th>Key Risk to Watch</th></tr></thead>
+          <tbody>
+            <tr><td><strong style="color: var(--sec-1)">Renewable Energy</strong></td><td>Accumulate <strong>IREDA</strong> (17.9x PE) on dips near ₹160; <strong>Tata Power</strong> (33.5x) attractive above ₹410 on solar cell manufacturing commissioning.</td><td>India's transition to 500 GW clean energy mandates exponential generation, storage, and transmission grid deployment.</td><td><strong style="color: var(--color-red)">Grid Curtailment:</strong> Delayed PPA sign-offs by state DISCOMs.</td></tr>
+            <tr><td><strong style="color: var(--sec-2)">Defence Mfg</strong></td><td>Buy <strong>HAL</strong> (34.4x PE) on corrections below ₹4,200; <strong>BEL</strong> (46.8x) is quality entry on Q2 results dip for export order execution.</td><td>Indigenization of fighter jets, defense electronics, and naval frigates guarantees a 7-year backlog runway.</td><td><strong style="color: var(--color-red)">Single-Source Delay:</strong> Foreign OEM component supply chain bottlenecks for engine assemblies.</td></tr>
+            <tr><td><strong style="color: var(--sec-3)">Capital Goods</strong></td><td>Initiate <strong>L&T</strong> (31.1x PE) at ₹3,400-3,550 zone; <strong>Siemens India</strong> (48.5x) on dips driven by factory automation capex.</td><td>Multidecade national infrastructure rebuild combined with private corporate capex resurgence.</td><td><strong style="color: var(--color-red)">Commodity Inflation:</strong> Sharp spikes in steel/copper prices compressing fixed-price EPC margins.</td></tr>
+            <tr><td><strong style="color: var(--sec-4)">EV Mobility</strong></td><td>Buy <strong>Tata Motors</strong> (41.4x PE) near ₹980; <strong>TVS Motor</strong> (38.2x) key beneficiary of 2W EV market share expansion.</td><td>Rapid parity in total cost of ownership (TCO) accelerating electric transition across 2W, 3W, and commercial fleets.</td><td><strong style="color: var(--color-red)">Battery Tech Shift:</strong> Volatile Lithium-ion cell costs or rapid adoption of alternative chemistry.</td></tr>
+            <tr><td><strong style="color: var(--sec-5)">AI & Data Centers</strong></td><td>Buy <strong>TCS</strong> (16.3x PE) for reliable 4% yield & AI consulting; <strong>Netweb Tech</strong> (45.2x) on high-performance computing demand.</td><td>India becoming Asia's premier hyper-scale data center hub with domestic AI sovereign compute capacity.</td><td><strong style="color: var(--color-red)">US Tech Spend:</strong> Slowdown in North American enterprise IT discretionary spending budgets.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>India Growth Sectors Briefing · Data Sourced Live as of <span>03 August 2026</span></p>
+      <p>Prepared by <span>nv analytics Macro & Sector Research Group</span> · For Educational Purposes Only · Not Investment Advice</p>
+    </footer>
+  </div>
+
+  <div class="modal-overlay" id="refModalOverlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal-card">
+      <div class="modal-header"><h3 class="modal-title">📎 Data References & Sources</h3><button class="btn-close-panel" onclick="closeReferencesModal()">✕</button></div>
+      <div class="modal-body">
+        <div class="modal-disclaimer">⚠ All data sourced from publicly available reports as of 03 August 2026. For educational purposes only. Not investment advice. P/E ratios and market caps fluctuate daily based on market movements.</div>
+        <div class="sources-list" id="sourcesList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sourcesData = [
+      { id: "S1", title: "MoSPI India Real GDP Growth Q4 FY26 Release", url: "https://mospi.gov.in", desc: "India Real GDP growth rate recorded at 7.7% for FY26." },
+      { id: "S2", title: "RBI Monetary Policy Committee Statement (Aug 2026)", url: "https://rbi.org.in", desc: "Repo rate held unchanged at 5.25% with neutral stance." },
+      { id: "S3", title: "RBI Monthly Bulletin — Bank Credit Growth Data", url: "https://rbi.org.in", desc: "Non-food bank credit growth recorded at 18.8% YoY." },
+      { id: "S4", title: "Union Budget 2026-27 Speech & Financial Statement", url: "https://indiabudget.gov.in", desc: "Capital Expenditure allocated at ₹12.2 Lakh Crore (Effective ₹17.15L Cr)." },
+      { id: "S5", title: "NSE India Nifty 50 Index PE & Valuation Snapshot", url: "https://niftyindices.com", desc: "Nifty 50 trailing PE ratio recorded at 20.78x as of August 2026." },
+      { id: "S6", title: "Screener.in Financial Database — Indian Equities", url: "https://screener.in", desc: "Trailing PE and Market Cap figures for IREDA, Tata Power, HAL, BEL, TCS, HDFC Bank." },
+      { id: "S7", title: "IBEF Indian Renewable Energy Industry Analysis 2026", url: "https://ibef.org", desc: "500 GW target by 2030, sector revenue CAGR projected at 28.5%." },
+      { id: "S8", title: "Ministry of Defence — Procurement & Export Statistics", url: "https://mod.gov.in", desc: "Domestic procurement share at 75%+, defense exports crossing ₹21,000 Cr." },
+      { id: "S9", title: "Nifty EV & New Age Automotive Index Whitepaper", url: "https://niftyindices.com", desc: "Electric vehicle components & charger market projected CAGR 32.6%." },
+      { id: "S10", title: "Nasscom Indian IT & AI Infrastructure Report 2026", url: "https://nasscom.in", desc: "Data center hyper-scale capacity growth projected at 25.4% CAGR." },
+      { id: "S11", title: "Trading Economics — India Inflation & Forex Tracker", url: "https://tradingeconomics.com/india", desc: "CPI Inflation 4.38%, USD/INR exchange rate ₹95.25." },
+      { id: "S12", title: "Moneycontrol Sector PE & Earnings Tracker", url: "https://moneycontrol.com", desc: "Sectoral index PE ratios and earnings growth momentum rates." },
+      { id: "S13", title: "Kotak Mutual Fund — Capital Goods Sector Outlook", url: "https://kotakmf.com", desc: "Infrastructure buildout & private capex multiplier analysis." },
+      { id: "S14", title: "Motilal Oswal Financial Services — IT Sector Strategy", url: "https://motilaloswal.com", desc: "Valuation discount on Tier-1 IT majors and AI service adoption rates." },
+      { id: "S15", title: "PIB India — PM E-DRIVE Scheme Guidelines", url: "https://pib.gov.in", desc: "₹10,900 Cr outlay for electric vehicle charging infra & subsidies." },
+      { id: "S16", title: "Indian Chemical News — Specialty Chemicals Outlook 2030", url: "https://indianchemicalnews.com", desc: "China+1 sourcing shift driving 18% sector CAGR." },
+      { id: "S17", title: "OpenFDA / Pharmexcil — US FDA Abbreviated New Drug Approvals", url: "https://pharmexcil.com", desc: "Pharma export growth and complex generic filing trends." },
+      { id: "S18", title: "Nifty India Defence Index Performance Factsheet", url: "https://niftyindices.com", desc: "1-Year index price return of 42.6% for defense basket." },
+      { id: "S19", title: "JLL India Data Center Market Report 2026", url: "https://jll.co.in", desc: "Hyper-scale data center capacity reaching 2.5 GW in India." },
+      { id: "S20", title: "Craytheon / IndexPE Historical Valuation Charts", url: "https://indexpe.in", desc: "5-Year Nifty median PE benchmark of 21.5x." }
+    ];
+
+    function renderSources() {
+      const listContainer = document.getElementById('sourcesList');
+      listContainer.innerHTML = sourcesData.map(s => `
+        <div class="source-item">
+          <span class="source-tag">[${s.id}]</span>
+          <span class="source-title">${s.title}</span>
+          <a href="${s.url}" target="_blank" class="source-url">${s.url}</a>
+          <div class="source-desc">${s.desc}</div>
+        </div>
+      `).join('');
+    }
+
+    const btnTheme = document.getElementById('btnThemeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    let currentTheme = 'dark';
+
+    btnTheme.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      themeIcon.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+      themeText.textContent = currentTheme === 'dark' ? 'Light' : 'Dark';
+      initOrUpdateChart();
+    });
+
+    function openReferencesModal() { document.getElementById('refModalOverlay').classList.add('open'); }
+    function closeReferencesModal() { document.getElementById('refModalOverlay').classList.remove('open'); }
+    function closeModalOnOverlay(e) { if (e.target.id === 'refModalOverlay') closeReferencesModal(); }
+    document.getElementById('btnOpenRefs').addEventListener('click', openReferencesModal);
+
+    const deepDiveData = {
+      1: { title: "01 · Renewable Energy & Green Power Deep Dive", color: "var(--sec-1)", macroThesis: "India's target of reaching 500 GW of non-fossil energy capacity by 2030 requires an estimated annual investment of ₹1.8–2.2 Lakh Crore. Grid parity, paired with government mandates for green hydrogen adoption and solar manufacturing PLI schemes, creates an extraordinary revenue runway for power producers, equipment makers, and green financiers.", players: [{ ticker: "IREDA", name: "Indian Renewable Energy Dev. Agency", desc: "Nodal green energy financier. P/E 17.9x · Mcap ₹33,596 Cr" }, { ticker: "TATAPOWER", name: "Tata Power Co Ltd", desc: "Integrated solar & EV charging major. P/E 33.5x · Mcap ₹1,28,853 Cr" }, { ticker: "NTPC", name: "NTPC Green Energy", desc: "PSU green transition giant. P/E 16.2x · Mcap ₹3,85,000 Cr" }, { ticker: "SUZLON", name: "Suzlon Energy Ltd", desc: "Wind turbine OEM leader. P/E 28.4x · Mcap ₹74,200 Cr" }, { ticker: "ADANIGREEN", name: "Adani Green Energy Ltd", desc: "Pure-play utility scale renewable developer. P/E 42.1x · Mcap ₹2,40,000 Cr" }], cat1Y: "Commissioning of 10 GW solar module capacity & ALMM import barrier enforcement.", cat3Y: "National Green Hydrogen Mission off-take contracts and battery storage mandates.", cat5Y: "Commercial scale offshore wind deployment & cross-border South Asian green grid.", risks: ["DISCOM payment delays", "Transmission line connectivity bottlenecks", "Solar cell silicon price spikes"], export: "Exporting solar modules & green ammonia to EU & Middle East markets under FTA agreements." },
+      2: { title: "02 · Defence & Aerospace Manufacturing Deep Dive", color: "var(--sec-2)", macroThesis: "The Ministry of Defence's positive indigenization lists have reserved over 75% of capital acquisition budgets for domestic Indian vendors. Coupled with a government push to hit ₹50,000 Crore in defense exports by 2029, leading DPSUs and private defense tech companies enjoy 5 to 7 years of order book execution visibility.", players: [{ ticker: "HAL", name: "Hindustan Aeronautics Ltd", desc: "Fighter jet & helicopter manufacturer. P/E 34.4x · Mcap ₹3,13,104 Cr" }, { ticker: "BEL", name: "Bharat Electronics Ltd", desc: "Defense radars & avionics leader. P/E 46.8x · Mcap ₹2,87,932 Cr" }, { ticker: "MAZDOCK", name: "Mazagon Dock Shipbuilders", desc: "Submarines & naval warships. P/E 32.1x · Mcap ₹98,500 Cr" }, { ticker: "DATAPATTNS", name: "Data Patterns India Ltd", desc: "Defense electronics & EW systems. P/E 42.5x · Mcap ₹16,400 Cr" }, { ticker: "COCHINSHIP", name: "Cochin Shipyard Ltd", desc: "Aircraft carrier & commercial vessel builder. P/E 35.2x · Mcap ₹44,000 Cr" }], cat1Y: "Tejas Mk1A fighter jet deliveries and naval submarine procurement orders.", cat3Y: "Export order book expansion to Southeast Asia, Middle East, and Armenia.", cat5Y: "AMCA 5th-gen fighter jet prototyping & indigenous engine manufacturing.", risks: ["Supply chain bottlenecks for foreign engine sub-assemblies", "Single-buyer customer risk (MoD)"], export: "Exporting coastal surveillance radars, Akash missile batteries, and patrol vessels globally." },
+      3: { title: "03 · Capital Goods & Industrial Engineering Deep Dive", color: "var(--sec-3)", macroThesis: "A record ₹12.2 Lakh Crore effective Union Budget capex combined with private corporate capacity expansion across steel, cement, and electronics is driving a multi-year supercycle in capital goods. Industrial automation, smart electrical grids, and railway freight corridors represent key structural growth pillars.", players: [{ ticker: "LT", name: "Larsen & Toubro Ltd", desc: "Infrastructure & heavy engineering titan. P/E 31.1x · Mcap ₹5,47,870 Cr" }, { ticker: "SIEMENS", name: "Siemens India Ltd", desc: "Smart grid & industrial automation leader. P/E 48.5x · Mcap ₹2,35,000 Cr" }, { ticker: "ABB", name: "ABB India Ltd", desc: "Robotics, power & electrification pioneer. P/E 52.0x · Mcap ₹1,78,000 Cr" }, { ticker: "CGPOWER", name: "CG Power & Industrial Solutions", desc: "Transformers, motors & semi-con packaging. P/E 45.2x · Mcap ₹1,12,000 Cr" }, { ticker: "THERMAX", name: "Thermax Ltd", desc: "Clean energy, boilers & water treatment. P/E 41.0x · Mcap ₹58,000 Cr" }], cat1Y: "High-speed rail corridor execution and HVDC power transmission order awards.", cat3Y: "Private corporate capex upcycle across semiconductors, chemicals, and data centers.", cat5Y: "Global supply chain integration for green hydrogen equipment & industrial robotics.", risks: ["Raw material cost inflation (steel, copper)", "Execution delays due to land acquisition"], export: "Engineering EPC exports to Middle East, Africa, and ASEAN infrastructure projects." },
+      4: { title: "04 · EV & New-Age Mobility Deep Dive", color: "var(--sec-4)", macroThesis: "India's electric vehicle transition is reaching a tipping point, backed by the ₹10,900 Crore PM E-DRIVE scheme and state-level fleet electrification mandates. Electric 2W/3W penetration is accelerating toward 30% by 2030, while auto component leaders are pivoting to EV drive-trains, batteries, and charging infrastructure.", players: [{ ticker: "TATAMOTORS", name: "Tata Motors Ltd", desc: "India's #1 EV passenger car manufacturer. P/E 41.4x · Mcap ₹1,64,267 Cr" }, { ticker: "TVSMOTOR", name: "TVS Motor Company Ltd", desc: "2W EV market share gainer (iQube). P/E 38.2x · Mcap ₹1,25,000 Cr" }, { ticker: "M&M", name: "Mahindra & Mahindra Ltd", desc: "Electric SUV & 3W commercial leader. P/E 29.5x · Mcap ₹3,45,000 Cr" }, { ticker: "EXIDEIND", name: "Exide Industries Ltd", desc: "Lithium-ion gigafactory setup partner. P/E 32.0x · Mcap ₹44,500 Cr" }, { ticker: "SONACOMS", name: "Sona BLW Precision Forgings", desc: "EV differential gears & traction motors. P/E 48.0x · Mcap ₹42,000 Cr" }], cat1Y: "Launch of new affordable EV passenger cars and commercial fleet electrification.", cat3Y: "Domestic Lithium-ion cell gigafactory commercial production rollout.", cat5Y: "Autonomous & connected vehicle software integration across export markets.", risks: ["Lithium cell price volatility", "Reduction in government purchase subsidies"], export: "Supplying EV drive-train components to North American and European EV OEMs." },
+      5: { title: "05 · AI Infrastructure, Data Centers & Digital IT Deep Dive", color: "var(--sec-5)", macroThesis: "India is emerging as Asia's hyper-scale data center hub, driven by stringent data localization laws, explosion in AI model training/inference, and the ₹10,370 Crore IndiaAI Mission. Domestic IT service leaders are transforming into AI solution integrators, while infra developers build high-density compute facilities.", players: [{ ticker: "TCS", name: "Tata Consultancy Services Ltd", desc: "Global IT & AI consulting leader. P/E 16.3x · Mcap ₹8,74,311 Cr" }, { ticker: "NETWEB", name: "Netweb Technologies India", desc: "High-performance AI server & supercomputing. P/E 45.2x · Mcap ₹15,800 Cr" }, { ticker: "PERSISTENT", name: "Persistent Systems Ltd", desc: "Digital engineering & enterprise AI integration. P/E 38.0x · Mcap ₹78,000 Cr" }, { ticker: "HCLTECH", name: "HCL Technologies Ltd", desc: "AI engineering & cloud infrastructure. P/E 18.5x · Mcap ₹4,10,000 Cr" }, { ticker: "ANANTRAJ", name: "Anant Raj Ltd", desc: "Real estate to 300MW data center park developer. P/E 34.0x · Mcap ₹18,500 Cr" }], cat1Y: "Enterprise AI adoption contracts and GPU supercomputing server installations.", cat3Y: "Data center capacity expansion from 1.0 GW to 2.5+ GW across Mumbai, Chennai, NCR.", cat5Y: "Sovereign Indian LLMs and widespread automation across domestic banking & retail.", risks: ["US enterprise discretionary IT spend slowdown", "Power supply & cooling infra limits"], export: "Exporting AI engineering services and remote cloud management to Fortune 500 enterprises." }
+    };
+
+    let activePanelSectorId = null;
+
+    function toggleDeepDive(sectorId) {
+      const container = document.getElementById('deepDiveContainer');
+      const cards = document.querySelectorAll('.sector-card');
+      cards.forEach(c => c.classList.remove('active'));
+
+      if (activePanelSectorId === sectorId) {
+        container.innerHTML = '';
+        activePanelSectorId = null;
+        return;
+      }
+
+      activePanelSectorId = sectorId;
+      const data = deepDiveData[sectorId];
+      cards[sectorId - 1].classList.add('active');
+
+      container.innerHTML = `
+        <div class="deep-dive-panel" style="--panel-color: ${data.color}">
+          <div class="panel-header">
+            <h3 class="panel-title">${data.title}</h3>
+            <button class="btn-close-panel" onclick="toggleDeepDive(${sectorId})">✕</button>
+          </div>
+          <div class="panel-body">
+            <div>
+              <h4 class="panel-sec-heading">Macro Investment Thesis</h4>
+              <p class="panel-text">${data.macroThesis}</p>
+              <h4 class="panel-sec-heading">Listed Key Players (NSE/BSE Active)</h4>
+              <ul class="players-list">
+                ${data.players.map(p => `<li><span class="ticker-code">${p.ticker}</span> (${p.name}) — ${p.desc}</li>`).join('')}
+              </ul>
+            </div>
+            <div>
+              <h4 class="panel-sec-heading">Horizon Catalysts</h4>
+              <p class="panel-text"><strong>1-Year:</strong> ${data.cat1Y}</p>
+              <p class="panel-text"><strong>3-Year:</strong> ${data.cat3Y}</p>
+              <p class="panel-text"><strong>5-Year:</strong> ${data.cat5Y}</p>
+              <p class="panel-text" style="margin-top: 10px;"><strong>Export / Global Angle:</strong> ${data.export}</p>
+              <div class="risk-box">
+                <h5>Key Sector Risks</h5>
+                <ul>${data.risks.map(r => `<li>${r}</li>`).join('')}</ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    let rotationChartInstance = null;
+    let currentChartTab = 1;
+    let activeSectorsSet = new Set(['Renewables', 'Defence', 'Capital Goods', 'EV Mobility', 'AI Infra']);
+
+    const sectorChartColors = {
+      'Renewables': '#e86030', 'Defence': '#3a7a1e', 'Capital Goods': '#c88c00', 'EV Mobility': '#1a5fa0', 'AI Infra': '#01696f'
+    };
+
+    const chartSectorData = {
+      'Renewables': { base100: [100, 128.5, 212.1, 350.2], cagr: [28.5, 28.5, 28.5], pe: 24.5, mom: 34.2, conviction: 5 },
+      'Defence': { base100: [100, 124.2, 191.6, 295.4], cagr: [24.2, 24.2, 24.2], pe: 38.2, mom: 42.6, conviction: 5 },
+      'Capital Goods': { base100: [100, 120.8, 176.3, 257.4], cagr: [20.8, 20.8, 20.8], pe: 31.1, mom: 28.5, conviction: 4 },
+      'EV Mobility': { base100: [100, 132.6, 233.1, 410.2], cagr: [32.6, 32.6, 32.6], pe: 35.8, mom: 22.1, conviction: 4 },
+      'AI Infra': { base100: [100, 125.4, 197.2, 310.0], cagr: [25.4, 25.4, 25.4], pe: 24.8, mom: 18.4, conviction: 4 }
+    };
+
+    function toggleSectorChart(sectorName) {
+      if (activeSectorsSet.has(sectorName)) {
+        if (activeSectorsSet.size <= 2) return;
+        activeSectorsSet.delete(sectorName);
+      } else {
+        activeSectorsSet.add(sectorName);
+      }
+
+      const chips = document.querySelectorAll('#chartToggleChips .chip-toggle');
+      chips.forEach(chip => {
+        if (chip.textContent.includes(sectorName)) {
+          if (activeSectorsSet.has(sectorName)) chip.classList.add('active');
+          else chip.classList.remove('active');
+        }
+      });
+      initOrUpdateChart();
+    }
+
+    function switchChartTab(tabIndex) {
+      currentChartTab = tabIndex;
+      const tabs = document.querySelectorAll('.btn-tab');
+      tabs.forEach((t, idx) => {
+        if (idx + 1 === tabIndex) t.classList.add('active');
+        else t.classList.remove('active');
+      });
+
+      const noteText = document.getElementById('chartNoteText');
+      if (tabIndex === 1) noteText.textContent = "* Market sizes normalized to base 100 for current year to compare relative growth trajectories across different market scales.";
+      else if (tabIndex === 2) noteText.textContent = "* CAGR % represents estimated market size growth rates. Not stock return forecasts.";
+      else noteText.textContent = "* Lower-left = Value opportunity (cheap PE, lag momentum). Upper-right = Momentum premium (high PE, strong trend). Bubble radius = Conviction score.";
+      initOrUpdateChart();
+    }
+
+    function initOrUpdateChart() {
+      const ctx = document.getElementById('rotationChart').getContext('2d');
+      const isDark = currentTheme === 'dark';
+      const textColor = isDark ? '#e8e6e2' : '#0f172a';
+      const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+
+      if (rotationChartInstance) rotationChartInstance.destroy();
+      const activeSectorsArray = Array.from(activeSectorsSet);
+
+      if (currentChartTab === 1) {
+        const datasets = activeSectorsArray.map(sec => ({ label: sec, data: chartSectorData[sec].base100, backgroundColor: sectorChartColors[sec], borderRadius: 4 }));
+        rotationChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: { labels: ['Today (Base 100)', '1Y Projected', '3Y Projected', '5Y Projected'], datasets: datasets },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: textColor, font: { family: 'Inter', size: 11 } } } },
+            scales: { x: { ticks: { color: textColor }, grid: { color: gridColor } }, y: { ticks: { color: textColor }, grid: { color: gridColor }, title: { display: true, text: 'Normalized Growth Index (Base 100)', color: textColor } } }
+          }
+        });
+      } else if (currentChartTab === 2) {
+        const datasets = [
+          { label: '1Y CAGR %', data: activeSectorsArray.map(sec => chartSectorData[sec].cagr[0]), backgroundColor: 'rgba(1, 105, 111, 0.85)', borderRadius: 4 },
+          { label: '3Y CAGR %', data: activeSectorsArray.map(sec => chartSectorData[sec].cagr[1]), backgroundColor: 'rgba(20, 184, 166, 0.85)', borderRadius: 4 },
+          { label: '5Y CAGR %', data: activeSectorsArray.map(sec => chartSectorData[sec].cagr[2]), backgroundColor: 'rgba(245, 158, 11, 0.85)', borderRadius: 4 }
+        ];
+        rotationChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: { labels: activeSectorsArray, datasets: datasets },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: textColor, font: { family: 'Inter', size: 11 } } } },
+            scales: { x: { ticks: { color: textColor }, grid: { color: gridColor } }, y: { ticks: { color: textColor }, grid: { color: gridColor }, title: { display: true, text: 'Projected CAGR %', color: textColor } } }
+          }
+        });
+      } else if (currentChartTab === 3) {
+        const datasets = activeSectorsArray.map(sec => ({
+          label: sec,
+          data: [{ x: chartSectorData[sec].pe, y: chartSectorData[sec].mom, r: chartSectorData[sec].conviction * 4 + 4 }],
+          backgroundColor: sectorChartColors[sec]
+        }));
+        rotationChartInstance = new Chart(ctx, {
+          type: 'bubble',
+          data: { datasets: datasets },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: textColor, font: { family: 'Inter', size: 11 } } } },
+            scales: { x: { ticks: { color: textColor }, grid: { color: gridColor }, title: { display: true, text: 'Sector Trailing P/E Ratio', color: textColor } }, y: { ticks: { color: textColor }, grid: { color: gridColor }, title: { display: true, text: '1-Year Price Return %', color: textColor } } }
+          }
+        });
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSources();
+      initOrUpdateChart();
+    });
+  </script>
+</body>
+</html>

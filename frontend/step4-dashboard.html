@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VOLTAS Equity Analysis Report By NV Analytics Research Desk</title>
+
+  <!-- Google Fonts: Cormorant Garamond, DM Mono, Sora -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Mono:wght@500&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js 4.4.0 & html2pdf.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #080D18;
+      --surface: #0F1729;
+      --card: #141E30;
+      --border: #1E3050;
+      --text: #E2E8F0;
+      --dim: #94A3B8;
+      --muted: #4E5D73;
+      --gold: #D4AF37;
+      --green: #22C55E;
+      --teal: #14B8A6;
+      --amber: #F59E0B;
+      --red: #EF4444;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-mono: 'DM Mono', monospace;
+      --font-body: 'Sora', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 11px;
+      line-height: 1.75;
+      padding-bottom: 60px;
+    }
+
+    /* ACTION BAR */
+    .top-action-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn-pdf {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 10px rgba(16,185,129,0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-pdf:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16,185,129,0.4);
+    }
+    .btn-secondary-action {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-secondary-action:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* PRINT STYLESHEET */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-size: 9.5pt !important;
+        line-height: 1.5 !important;
+        padding-bottom: 0 !important;
+      }
+      .top-action-bar, .tab-bar, .footer {
+        display: none !important;
+      }
+      .header {
+        background: #f8fafc !important;
+        border-bottom: 2px solid #0f172a !important;
+        padding: 18px 24px !important;
+      }
+      .header-rule { display: none !important; }
+      .report-title { color: #0f172a !important; font-size: 24pt !important; }
+      .report-tag { color: #0369a1 !important; }
+      .author-byline { color: #475569 !important; }
+      .metadata-row { color: #334155 !important; }
+      .metadata-row span strong { color: #0f172a !important; }
+      .container { max-width: 100% !important; padding: 16px 24px !important; }
+      .recommendation-box {
+        background: #f0fdf4 !important;
+        border: 2px solid #16a34a !important;
+        color: #0f172a !important;
+        page-break-inside: avoid;
+      }
+      .rec-badge { color: #16a34a !important; font-size: 26pt !important; }
+      .rec-target-price { color: #0f172a !important; font-size: 20pt !important; }
+      .rec-subtext { color: #64748b !important; }
+      .tab-pane {
+        display: block !important;
+        opacity: 1 !important;
+        transform: none !important;
+        page-break-after: always;
+      }
+      .tab-pane:last-of-type {
+        page-break-after: auto;
+      }
+      .panel-card {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        page-break-inside: avoid;
+        margin-bottom: 16px !important;
+        box-shadow: none !important;
+      }
+      .custom-table {
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+      }
+      .custom-table th {
+        background: #f1f5f9 !important;
+        color: #1e293b !important;
+        border-bottom: 2px solid #cbd5e1 !important;
+      }
+      .custom-table td {
+        color: #0f172a !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+      }
+      .cell-green { background: #dcfce7 !important; color: #15803d !important; }
+      .cell-red { background: #fee2e2 !important; color: #b91c1c !important; }
+      .stat-card {
+        background: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+      .stat-label { color: #64748b !important; }
+      .stat-val { color: #0f172a !important; }
+      .takeaway-box {
+        background: #f8fafc !important;
+        border-left: 4px solid #0284c7 !important;
+        color: #1e293b !important;
+      }
+      .section-title {
+        color: #0f172a !important;
+        border-bottom: 1.5px solid #cbd5e1;
+        padding-bottom: 6px;
+        margin-top: 16px;
+      }
+      .subsection-title { color: #0369a1 !important; }
+    }
+
+    /* HEADER */
+    .header {
+      position: relative;
+      background: radial-gradient(circle at 90% 10%, rgba(212, 175, 55, 0.15), transparent 40%), var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 36px;
+      overflow: hidden;
+    }
+
+    .header-rule {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .report-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .report-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .author-byline {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .metadata-row {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--dim);
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .metadata-row span strong { color: var(--text); }
+
+    .container { max-width: 1380px; margin: 0 auto; padding: 24px 36px; }
+
+    /* RECOMMENDATION BOX */
+    .recommendation-box {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), var(--card));
+      border: 1px solid var(--green);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .rec-badge {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .rec-target-price {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .rec-subtext {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    /* STICKY TAB NAV */
+    .tab-bar {
+      position: sticky;
+      top: 0;
+      background: rgba(15, 23, 41, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 4px;
+      z-index: 100;
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--dim);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 14px 18px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* TAB CONTENT */
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: fadeUp 0.32s ease forwards; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .subsection-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--teal);
+      margin: 20px 0 12px 0;
+    }
+
+    .panel-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+    .grid-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .grid-4col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+
+    /* TABLES */
+    .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 16px; }
+
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .custom-table th {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dim);
+      background: var(--surface);
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .custom-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+    }
+
+    .cell-green { background: rgba(34, 197, 94, 0.12); color: var(--green); font-weight: 600; }
+    .cell-red { background: rgba(239, 68, 68, 0.12); color: var(--red); font-weight: 600; }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px;
+    }
+    .stat-label { font-family: var(--font-mono); font-size: 10px; color: var(--dim); text-transform: uppercase; }
+    .stat-val { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--gold); margin-top: 4px; }
+
+    .takeaway-box {
+      background: var(--surface);
+      border-left: 3px solid var(--gold);
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--dim);
+    }
+    .takeaway-box strong { color: var(--gold); }
+
+    /* FOOTER */
+    .footer {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+  </style>
+<body>
+
+  <!-- TOP ACTION BAR -->
+  <div class="top-action-bar">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-family:var(--font-mono); font-size:10px; color:var(--dim); text-transform:uppercase;">Analyze Custom Stock:</span>
+      <input type="text" id="topStockInput" placeholder="e.g. TCS.NS, INFY.NS" style="background:var(--card); border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:4px; font-family:var(--font-mono); font-size:11px; width:170px; text-transform:uppercase;" onkeydown="if(event.key==='Enter') searchCustomStock()">
+      <button onclick="searchCustomStock()" style="background:var(--gold); border:none; color:#080D18; padding:6px 14px; border-radius:4px; font-family:var(--font-mono); font-weight:700; font-size:10px; cursor:pointer;">🔍 Research</button>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <button id="btnDownloadPDF" onclick="downloadPDFReport()" class="btn-pdf">
+        📥 Download Full PDF Report
+      </button>
+      <button onclick="triggerPrint()" class="btn-secondary-action">
+        🖨️ Print / Save as PDF
+      </button>
+      <a id="linkStep3Compare" href="/step3-dashboard.html" class="btn-secondary-action" style="color:var(--gold); border-color:rgba(212,175,55,0.4);">
+        ⚖️ Step 3 Compare
+      </a>
+      <a href="/" class="btn-secondary-action" style="color:var(--dim);">
+        🏠 Pipeline Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div id="reportExportContainer">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="report-tag">Equity Analysis Report · Indian Stock Market</div>
+      <h1 class="report-title" id="hdrReportTitle">Loading Stock Report...</h1>
+      <div class="author-byline">By <span id="hdrAuthor">nv analytics Research Desk</span></div>
+      <div class="metadata-row">
+        <span>Ticker: <strong id="hdrTicker">IREDA.NS</strong></span>
+        <span>Sector: <strong id="hdrSector">Renewable Energy</strong></span>
+        <span>Financial Year: <strong>FY26 Audited / Q1 FY27</strong></span>
+        <span>Data Source: <strong>Screener.in / NSE / BSE</strong></span>
+      </div>
+      <div class="header-rule"></div>
+    </header>
+
+    <div class="container">
+
+    <!-- INVESTMENT RECOMMENDATION BOX -->
+    <div class="recommendation-box" id="recBox">
+      <div>
+        <div class="rec-subtext">Institutional Recommendation</div>
+        <div class="rec-badge" id="recBadge">BUY</div>
+      </div>
+      <div>
+        <div class="rec-subtext">Current Market Price (CMP)</div>
+        <div class="rec-target-price" id="recCurrentPrice" style="color:#FFFFFF; font-size:24px;">₹0.00</div>
+        <div style="color:var(--dim); font-family:var(--font-mono); font-size:10px;">NSE / BSE Live Quote</div>
+      </div>
+      <div>
+        <div class="rec-subtext">Target Price (Base Case)</div>
+        <div class="rec-target-price" id="recTargetPrice">₹0.00</div>
+        <div style="color:var(--green); font-family:var(--font-mono); font-weight:700;" id="recUpside">(+0.0% upside)</div>
+      </div>
+      <div>
+        <div class="rec-subtext">Target Horizon</div>
+        <div style="font-family:var(--font-mono); font-size:15px; color:#fff; font-weight:700;" id="recHorizon">18-24 months</div>
+      </div>
+    </div>
+
+    <!-- STICKY 7-TAB NAV -->
+    <nav class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('sec1')">1. Company Overview</button>
+      <button class="tab-btn" onclick="switchTab('sec2')">2. Quantitative Analysis</button>
+      <button class="tab-btn" onclick="switchTab('sec3')">3. Qualitative Analysis</button>
+      <button class="tab-btn" onclick="switchTab('sec4')">4. Shareholding Pattern</button>
+      <button class="tab-btn" onclick="switchTab('sec5')">5. Investment Thesis</button>
+      <button class="tab-btn" onclick="switchTab('sec6')">6. Valuation & Recommendation</button>
+      <button class="tab-btn" onclick="switchTab('sec7')">7. Conclusion</button>
+      <button class="tab-btn" onclick="switchTab('sec8')">8. ⚡ AI Powered News Reader</button>
+    </nav>
+
+    <!-- SECTION 1: COMPANY OVERVIEW -->
+    <div class="tab-pane active" id="pane-sec1">
+      <h2 class="section-title">1. Company Overview</h2>
+
+      <!-- Company Snapshot Cards -->
+      <div class="grid-4col" id="gridSec1Snapshot" style="margin-bottom:20px;"></div>
+
+      <div class="panel-card">
+        <h3 class="subsection-title">Corporate Profile & Business Overview</h3>
+        <p id="pCompanyDescription" style="font-size:12px; line-height:1.8; color:var(--text); margin-bottom:20px;"></p>
+        
+        <h3 class="subsection-title">Primary Business Activities & Operating Verticals</h3>
+        <ul id="listSec1Activities" style="margin-left:20px; font-size:12px; line-height:1.8; color:var(--text); margin-bottom:20px;"></ul>
+
+        <h3 class="subsection-title">Recent Strategic Developments & Corporate Actions</h3>
+        <div id="divRecentDevelopments" style="font-size:12px; line-height:1.8; color:var(--text); white-space:pre-line;"></div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: QUANTITATIVE ANALYSIS -->
+    <div class="tab-pane" id="pane-sec2">
+      <h2 class="section-title">2. Quantitative Analysis</h2>
+
+      <!-- ADDITION 1: 6-8 QUARTER FINANCIAL MOMENTUM ENGINE -->
+      <div class="panel-card" style="border-top:3px solid var(--teal);">
+        <h3 class="subsection-title" style="color:var(--teal);">⚡ 6–8 Quarter Financial Momentum Engine</h3>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableQuarterlyMomentum"></table>
+        </div>
+        <div class="takeaway-box" id="boxQuarterlyMomentum"></div>
+      </div>
+
+      <!-- ADDITION 3: DUPONT ROE & ROCE-WACC SPREAD -->
+      <div class="panel-card">
+        <h3 class="subsection-title">🔬 DuPont ROE Decomposition & Economic Capital Spread</h3>
+        <div class="grid-4col" id="gridDuPontMetrics"></div>
+        <div class="takeaway-box" id="boxDuPontTakeaway"></div>
+      </div>
+
+      <!-- ADDITION 2: CASH QUALITY & ACCRUAL AUDIT -->
+      <div class="panel-card">
+        <h3 class="subsection-title">💵 Cash Quality & Accrual Engine (OCF / PAT & Working Capital)</h3>
+        <div class="grid-3col" id="gridCashQuality"></div>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableCashFlowHist"></table>
+        </div>
+        <div class="takeaway-box" id="boxCashQualityTakeaway"></div>
+      </div>
+
+      <!-- ADDITION 4: TECHNICAL MICROSTRUCTURE & LIQUIDITY -->
+      <div class="panel-card">
+        <h3 class="subsection-title">📈 Technical Analysis, Volatility & Liquidity Microstructure</h3>
+        <div class="grid-4col" id="gridTechnicalMicro"></div>
+        <div class="takeaway-box" id="boxTechnicalTakeaway"></div>
+      </div>
+
+      <!-- a) Market Valuation -->
+      <div class="panel-card">
+        <h3 class="subsection-title">a) Market Valuation and Price Metrics</h3>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableValuationMetrics"></table>
+        </div>
+        <div class="takeaway-box" id="boxValuationTakeaway"></div>
+      </div>
+
+      <!-- b) Profitability and Returns -->
+      <div class="panel-card">
+        <h3 class="subsection-title">b) Profitability and Returns (5-Year Historical Trend)</h3>
+        <div style="height:240px; margin-bottom:16px;"><canvas id="canvasProfitabilityChart"></canvas></div>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableProfitabilityHist"></table>
+        </div>
+        <div class="takeaway-box" id="boxProfitabilityTakeaway"></div>
+      </div>
+
+      <!-- c) Growth Metrics -->
+      <div class="panel-card">
+        <h3 class="subsection-title">c) Growth Metrics</h3>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableGrowthMetrics"></table>
+        </div>
+        <div class="takeaway-box" id="boxGrowthTakeaway"></div>
+      </div>
+
+      <!-- d) Balance Sheet Strength -->
+      <div class="panel-card">
+        <h3 class="subsection-title">d) Balance Sheet Strength (5-Year Debt-to-Equity)</h3>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableDebtEquityHist"></table>
+        </div>
+        <div class="takeaway-box" id="boxDebtTakeaway"></div>
+      </div>
+
+      <!-- f) Dividend Analysis -->
+      <div class="panel-card">
+        <h3 class="subsection-title">f) Dividend Analysis</h3>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableDividendMetrics"></table>
+        </div>
+        <div class="takeaway-box" id="boxDividendTakeaway"></div>
+      </div>
+
+      <!-- g) Efficiency Ratios -->
+      <div class="panel-card">
+        <h3 class="subsection-title">g) Efficiency Ratios</h3>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableEfficiencyMetrics"></table>
+        </div>
+        <div class="takeaway-box" id="boxEfficiencyTakeaway"></div>
+      </div>
+
+      <!-- h) Valuation Comparison with Industry Peers -->
+      <div class="panel-card">
+        <h3 class="subsection-title">h) Valuation Comparison with Industry Peers</h3>
+        <div class="table-responsive">
+          <table class="custom-table" id="tablePeerComparison"></table>
+        </div>
+        <div class="takeaway-box" id="boxPeerTakeaway"></div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: QUALITATIVE ANALYSIS -->
+    <div class="tab-pane" id="pane-sec3">
+      <h2 class="section-title">3. Qualitative Analysis</h2>
+      
+      <div class="panel-card">
+        <h3 class="subsection-title">a) Business Model & Revenue Streams</h3>
+        <div style="font-size:12px; color:var(--text); margin-bottom:12px;"><strong>Core Products & Services:</strong></div>
+        <ul style="margin-left:20px; font-size:11px; color:var(--dim); margin-bottom:16px;" id="listProducts"></ul>
+        <p><strong>Revenue Mix:</strong> <span id="spanRevenueStreams"></span></p>
+        <p style="margin-top:10px;"><strong>Competitive Moat & Advantages:</strong> <span id="spanCompetitiveMoat"></span></p>
+      </div>
+
+      <!-- ADDITION 5: HARD CORPORATE GOVERNANCE INDICATORS -->
+      <div class="panel-card" style="border:1px solid var(--gold);">
+        <h3 class="subsection-title" style="color:var(--gold);">🛡️ Hard Corporate Governance Indicators</h3>
+        <div class="grid-3col" id="gridGovernanceMetrics"></div>
+        <div class="takeaway-box" id="boxGovernanceTakeaway"></div>
+      </div>
+
+      <div class="panel-card">
+        <h3 class="subsection-title">b) Management Quality & Executive Track Record</h3>
+        <p id="pManagementQuality" style="font-size:12px; line-height:1.8; color:var(--text); margin-bottom:12px;"></p>
+      </div>
+
+      <div class="panel-card">
+        <h3 class="subsection-title">c) Growth Strategy & R&D Initiatives</h3>
+        <p id="pGrowthStrategy" style="font-size:12px; line-height:1.8; color:var(--text);"></p>
+      </div>
+    </div>
+
+    <!-- SECTION 4: SHAREHOLDING PATTERN -->
+    <div class="tab-pane" id="pane-sec4">
+      <h2 class="section-title">4. Shareholding Pattern Analysis</h2>
+      
+      <div class="panel-card">
+        <div style="height:240px; margin-bottom:16px;"><canvas id="canvasShareholdingChart"></canvas></div>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableShareholdingPattern"></table>
+        </div>
+        <div class="takeaway-box" id="boxShareholdingTakeaway"></div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: INVESTMENT THESIS -->
+    <div class="tab-pane" id="pane-sec5">
+      <h2 class="section-title">5. Investment Thesis</h2>
+      
+      <div class="panel-card">
+        <h3 class="subsection-title">Key Drivers for Future Growth</h3>
+        <ul style="margin-left:20px; font-size:12px; color:var(--text); line-height:1.8;" id="listGrowthDrivers"></ul>
+        
+        <h3 class="subsection-title" style="margin-top:20px;">Potential Catalysts for Stock Price Movement</h3>
+        <ul style="margin-left:20px; font-size:12px; color:var(--text); line-height:1.8;" id="listStockCatalysts"></ul>
+
+        <h3 class="subsection-title" style="margin-top:20px;">Industry Trend & Competitive Positioning</h3>
+        <p id="pIndustryPositioning" style="font-size:12px; line-height:1.8; color:var(--text);"></p>
+      </div>
+    </div>
+
+    <!-- SECTION 6: VALUATION & RECOMMENDATION -->
+    <div class="tab-pane" id="pane-sec6">
+      <h2 class="section-title">6. Valuation and Recommendation</h2>
+
+      <!-- ADDITION 6: SCENARIO-BASED VALUATION MATRIX (BULL / BASE / BEAR) -->
+      <div class="panel-card" style="border:1px solid var(--teal);">
+        <h3 class="subsection-title" style="color:var(--teal);">📊 Scenario-Based Valuation Matrix (Bull / Base / Bear)</h3>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableValuationScenarios"></table>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h3 class="subsection-title">Sum-of-the-Parts (SOTP) / Fair Value Estimate</h3>
+        <div class="table-responsive">
+          <table class="custom-table" id="tableSOTPValuation"></table>
+        </div>
+      </div>
+
+      <div class="panel-card" style="border:1px solid var(--gold);">
+        <h3 class="subsection-title" style="color:var(--gold);">Investment Recommendation & Rationale</h3>
+        <p id="pValuationRationale" style="font-size:12px; line-height:1.8; color:var(--text);"></p>
+      </div>
+    </div>
+
+    <!-- SECTION 7: CONCLUSION -->
+    <div class="tab-pane" id="pane-sec7">
+      <h2 class="section-title">7. Conclusion</h2>
+      
+      <div class="panel-card" style="border-top:3px solid var(--gold);">
+        <p id="pConclusionSummary" style="font-size:13px; line-height:1.8; color:var(--text); font-weight:600; margin-bottom:16px;"></p>
+        <p id="pConclusionFinal" style="font-size:12px; line-height:1.8; color:var(--gold); font-weight:700;"></p>
+      </div>
+    </div>
+
+    <!-- SECTION 8: AI POWERED NEWS READER & SENTIMENT RADAR -->
+    <div class="tab-pane" id="pane-sec8">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h2 class="section-title" style="margin-bottom:4px;">8. AI Powered News Reader & Fundamental Sentiment Radar</h2>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--dim);">
+            Powered by <strong style="color:var(--gold);" id="lblAiEngine">AI Intelligence Engine</strong> · Institutional News & Catalysts Analysis
+          </div>
+        </div>
+        <div id="badgeAiSentimentTop" style="display:inline-block; font-family:var(--font-mono); font-weight:700; font-size:12px; padding:6px 14px; border-radius:20px; background:rgba(34,197,94,0.15); color:var(--green); border:1px solid rgba(34,197,94,0.3);">
+          🟢 Strong Bullish (+75%)
+        </div>
+      </div>
+
+      <!-- AI Composite Metrics Cards -->
+      <div class="grid-4col" id="gridAiSentimentCards" style="margin-bottom:24px;">
+        <div class="stat-card">
+          <div class="stat-label">AI Composite Sentiment</div>
+          <div class="stat-val" id="valAiCompositeScore" style="color:var(--green);">+0.75</div>
+          <div style="font-family:var(--font-mono); font-size:9px; color:var(--dim); margin-top:3px;">Score: -1.0 to +1.0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Dominant Catalyst</div>
+          <div class="stat-val" id="valDominantCatalyst" style="color:var(--teal); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Order Inflows</div>
+          <div style="font-family:var(--font-mono); font-size:9px; color:var(--dim); margin-top:3px;">Primary Fundamental Driver</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">News Polarity Breakdown</div>
+          <div class="stat-val" id="valNewsPolarity" style="color:#fff; font-size:13px;">4 🟢 / 1 🔴 / 1 🔵</div>
+          <div style="font-family:var(--font-mono); font-size:9px; color:var(--dim); margin-top:3px;">Bullish / Bearish / Neutral</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total News Analyzed</div>
+          <div class="stat-val" id="valTotalNewsCount" style="color:var(--gold);">6 Articles</div>
+          <div style="font-family:var(--font-mono); font-size:9px; color:var(--dim); margin-top:3px;">Real-Time Financial Feeds</div>
+        </div>
+      </div>
+
+      <!-- Live Stream of AI Analyzed News Cards -->
+      <div class="panel-card" style="border-top:3px solid var(--gold);">
+        <h3 class="subsection-title" style="color:var(--gold);">📰 Live Fundamental Catalysts & Institutional Analysis Stream</h3>
+        <div id="containerAiNewsStream" style="display:flex; flex-direction:column; gap:16px; margin-top:16px;">
+          <!-- Rendered dynamically -->
+        </div>
+        <div class="takeaway-box" id="boxAiNewsSynthesis" style="margin-top:20px;"></div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <p>Equity Analysis Report · Prepared by nv analytics Research Desk · Sourced via Screener.in, Yahoo Finance & Exchange Filings</p>
+      <p>For Educational & Informational Purposes Only · Not Investment Advice · Consult a SEBI-registered Financial Advisor</p>
+    </footer>
+
+  </div>
+
+  <script>
+    let reportPayload = null;
+    let charts = {};
+
+    function killCharts() {
+      Object.keys(charts).forEach(k => {
+        if (charts[k]) { charts[k].destroy(); charts[k] = null; }
+      });
+    }
+
+    async function initReport() {
+      const params = new URLSearchParams(window.location.search);
+      const ticker = params.get('ticker') || "IREDA.NS";
+      const autoDownload = params.get('autodownload') === '1';
+
+      const input = document.getElementById('topStockInput');
+      if (input) input.value = ticker;
+
+      const link3 = document.getElementById('linkStep3Compare');
+      if (link3) link3.href = `/step3-dashboard.html?tickers=${encodeURIComponent(ticker)}`;
+
+      try {
+        const res = await fetch('/api/step4', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ticker: ticker })
+        });
+        reportPayload = await res.json();
+        renderHeaderAndRecBox(reportPayload);
+        switchTab('sec1');
+
+        if (autoDownload) {
+          setTimeout(() => {
+            downloadPDFReport();
+          }, 800);
+        }
+      } catch (err) {
+        console.error("Error loading Equity Analysis Report:", err);
+      }
+    }
+
+    function renderHeaderAndRecBox(data) {
+      const s1 = data.section1_company_overview;
+      const rec = s1.investment_recommendation_box;
+
+      const rawName = s1.stock_name || s1.ticker || 'VOLTAS';
+      const cleanStockName = rawName.replace(/\.NS|\.BO/gi, '').replace(/\bLtd\b|\bLimited\b/gi, '').trim().toUpperCase();
+      document.title = `${cleanStockName || 'VOLTAS'} Equity Analysis Report By NV Analytics Research Desk`;
+
+      document.getElementById('hdrReportTitle').textContent = `${s1.stock_name} - Equity Analysis Report`;
+      document.getElementById('hdrAuthor').textContent = s1.author;
+      document.getElementById('hdrTicker').textContent = s1.ticker;
+      document.getElementById('hdrSector').textContent = s1.sector;
+
+      document.getElementById('recBadge').textContent = rec.recommendation;
+      document.getElementById('recCurrentPrice').textContent = rec.current_price || 'N/A';
+      document.getElementById('recTargetPrice').textContent = rec.target_price;
+      document.getElementById('recUpside').textContent = `(${rec.upside_downside} upside)`;
+      document.getElementById('recHorizon').textContent = rec.investment_horizon;
+
+      // Section 1 Snapshot Cards
+      document.getElementById('gridSec1Snapshot').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Current Market Price (CMP)</div><div class="stat-val" style="font-size:16px; color:#FFFFFF;">${rec.current_price || 'N/A'}</div></div>
+        <div class="stat-card"><div class="stat-label">52-Week High / Low</div><div class="stat-val" style="font-size:13px; color:var(--gold);">${s1.high_low_52w || 'N/A'}</div></div>
+        <div class="stat-card"><div class="stat-label">Headquarters / Founded</div><div class="stat-val" style="font-size:12px; color:var(--text);">${s1.hq_location || 'India'}</div></div>
+        <div class="stat-card"><div class="stat-label">ISIN Code</div><div class="stat-val" style="font-size:11px; color:var(--teal);">${s1.isin || 'N/A'}</div></div>
+      `;
+
+      document.getElementById('pCompanyDescription').textContent = s1.business_description;
+      
+      const actList = s1.primary_business_activities || [];
+      document.getElementById('listSec1Activities').innerHTML = actList.map(a => `<li>${a}</li>`).join('');
+
+      document.getElementById('divRecentDevelopments').textContent = s1.recent_developments;
+    }
+
+    function switchTab(tabName) {
+      killCharts();
+
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+      event && event.target && event.target.classList.add('active');
+      const targetPane = document.getElementById(`pane-${tabName}`);
+      if (targetPane) targetPane.classList.add('active');
+
+      setTimeout(() => {
+        if (tabName === 'sec2') renderSec2();
+        else if (tabName === 'sec3') renderSec3();
+        else if (tabName === 'sec4') renderSec4();
+        else if (tabName === 'sec5') renderSec5();
+        else if (tabName === 'sec6') renderSec6();
+        else if (tabName === 'sec7') renderSec7();
+        else if (tabName === 'sec8') renderSec8();
+      }, 60);
+    }
+
+    /* SECTION 2: QUANTITATIVE */
+    function renderSec2() {
+      if (!reportPayload) return;
+      const s2 = reportPayload.section2_quantitative_analysis;
+
+      // 1. Quarterly Momentum
+      const qMom = s2.quarterly_momentum_engine;
+      let qHtml = `<thead><tr><th>Quarter</th><th>Revenue (₹ Cr)</th><th>YoY Growth %</th><th>QoQ Growth %</th><th>EBITDA Margin %</th><th>PAT (₹ Cr)</th><th>PAT YoY %</th></tr></thead><tbody>`;
+      (qMom.quarterly_table || []).forEach(q => {
+        const ebitdaMargin = (typeof q.ebitda_margin === 'number') ? q.ebitda_margin.toFixed(1) : q.ebitda_margin;
+        const yoyRev = (typeof q.yoy_rev === 'number') ? (q.yoy_rev > 0 ? `+${q.yoy_rev.toFixed(1)}` : `${q.yoy_rev.toFixed(1)}`) : `+${q.yoy_rev}`;
+        const qoqRev = (typeof q.qoq_rev === 'number') ? (q.qoq_rev > 0 ? `+${q.qoq_rev.toFixed(1)}` : `${q.qoq_rev.toFixed(1)}`) : `+${q.qoq_rev}`;
+        const yoyPat = (typeof q.yoy_pat === 'number') ? (q.yoy_pat > 0 ? `+${q.yoy_pat.toFixed(1)}` : `${q.yoy_pat.toFixed(1)}`) : `+${q.yoy_pat}`;
+        qHtml += `<tr>
+          <td><strong>${q.quarter}</strong></td>
+          <td>₹${q.revenue} Cr</td>
+          <td class="cell-green">${yoyRev}%</td>
+          <td>${qoqRev}%</td>
+          <td>${ebitdaMargin}%</td>
+          <td>₹${q.pat} Cr</td>
+          <td class="cell-green">${yoyPat}%</td>
+        </tr>`;
+      });
+      qHtml += `</tbody>`;
+      document.getElementById('tableQuarterlyMomentum').innerHTML = qHtml;
+      document.getElementById('boxQuarterlyMomentum').innerHTML = `<strong>Quarterly Momentum Analysis:</strong> ${qMom.momentum_analysis}`;
+
+      // 2. DuPont & ROCE-WACC Spread
+      const dp = s2.dupont_capital_spread;
+      document.getElementById('gridDuPontMetrics').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Net Profit Margin</div><div class="stat-val">${dp.net_profit_margin}</div></div>
+        <div class="stat-card"><div class="stat-label">Asset Turnover</div><div class="stat-val">${dp.asset_turnover}</div></div>
+        <div class="stat-card"><div class="stat-label">Financial Leverage</div><div class="stat-val">${dp.financial_leverage}</div></div>
+        <div class="stat-card" style="border-color:var(--green);"><div class="stat-label">ROCE − WACC Spread</div><div class="stat-val" style="color:var(--green);">${dp.roce_wacc_spread}</div></div>
+      `;
+      document.getElementById('boxDuPontTakeaway').innerHTML = `<strong>DuPont & Capital Spread Takeaway:</strong> ${dp.spread_takeaway}`;
+
+      // 3. Cash Quality & Accruals
+      const cq = s2.e_cash_flow_accruals;
+      document.getElementById('gridCashQuality').innerHTML = `
+        <div class="stat-card"><div class="stat-label">OCF / PAT %</div><div class="stat-val" style="color:var(--green);">${cq.ocf_to_pat_pct}</div></div>
+        <div class="stat-card"><div class="stat-label">Cash Conversion Cycle</div><div class="stat-val">${cq.cash_conversion_cycle_days}</div></div>
+        <div class="stat-card"><div class="stat-label">Sloan Accrual Ratio</div><div class="stat-val">${cq.sloan_accrual_ratio_pct}</div></div>
+      `;
+      document.getElementById('boxCashQualityTakeaway').innerHTML = `<strong>Earnings Quality Audit:</strong> ${cq.quality_assessment}`;
+
+      // 4. Technical Microstructure
+      const tm = s2.technical_microstructure;
+      document.getElementById('gridTechnicalMicro').innerHTML = `
+        <div class="stat-card"><div class="stat-label">RSI (14-Day)</div><div class="stat-val">${tm.rsi_14d}</div></div>
+        <div class="stat-card"><div class="stat-label">Beta (vs Nifty 50)</div><div class="stat-val">${tm.beta}</div></div>
+        <div class="stat-card"><div class="stat-label">90D Volatility</div><div class="stat-val">${tm.volatility_90d}</div></div>
+        <div class="stat-card"><div class="stat-label">30D ADTV</div><div class="stat-val">${tm.adtv_30d}</div></div>
+      `;
+      document.getElementById('boxTechnicalTakeaway').innerHTML = `<strong>Technical Structure:</strong> ${tm.technical_summary} | <strong>1Y Max Drawdown:</strong> ${tm.max_drawdown_1y} | <strong>3Y Max Drawdown:</strong> ${tm.max_drawdown_3y}`;
+
+      // a) Valuation
+      let aHtml = `<thead><tr><th>Metric</th><th>Current Value (FY25/TTM)</th><th>5-Year Trend</th></tr></thead><tbody>`;
+      s2.a_market_valuation.metrics.forEach(m => {
+        aHtml += `<tr><td><strong>${m.label}</strong></td><td><strong>${m.val}</strong></td><td>${m.trend}</td></tr>`;
+      });
+      aHtml += `</tbody>`;
+      document.getElementById('tableValuationMetrics').innerHTML = aHtml;
+      document.getElementById('boxValuationTakeaway').innerHTML = `<strong>Trend Analysis:</strong> ${s2.a_market_valuation.trend_analysis}<br><strong>Key Takeaways:</strong> ${s2.a_market_valuation.key_takeaways}`;
+
+      // b) Profitability Chart & Table
+      const bTable = s2.b_profitability_returns.hist_table;
+      let bHtml = `<thead><tr><th>Metric</th><th>FY24</th><th>FY23</th><th>FY22</th><th>FY21</th><th>FY20</th><th>Trend</th></tr></thead><tbody>`;
+      bTable.forEach(row => {
+        bHtml += `<tr><td><strong>${row.metric}</strong></td><td class="cell-green">${row.FY24}</td><td>${row.FY23}</td><td>${row.FY22}</td><td>${row.FY21}</td><td>${row.FY20}</td><td>${row.trend}</td></tr>`;
+      });
+      bHtml += `</tbody>`;
+      document.getElementById('tableProfitabilityHist').innerHTML = bHtml;
+      document.getElementById('boxProfitabilityTakeaway').innerHTML = `<strong>Trend Analysis:</strong> ${s2.b_profitability_returns.trend_analysis}<br><strong>Key Takeaways:</strong> ${s2.b_profitability_returns.key_takeaways}`;
+
+      const ctxProf = document.getElementById('canvasProfitabilityChart');
+      if (ctxProf) {
+        charts.prof = new Chart(ctxProf, {
+          type: 'line',
+          data: {
+            labels: ['FY20', 'FY21', 'FY22', 'FY23', 'FY24'],
+            datasets: [
+              { label: 'ROE %', data: bTable[0] ? [parseFloat(bTable[0].FY20), parseFloat(bTable[0].FY21), parseFloat(bTable[0].FY22), parseFloat(bTable[0].FY23), parseFloat(bTable[0].FY24)] : [11, 12.5, 14.2, 15.8, 17.2], borderColor: '#10B981', tension: 0.2 },
+              { label: 'ROCE %', data: bTable[1] ? [parseFloat(bTable[1].FY20), parseFloat(bTable[1].FY21), parseFloat(bTable[1].FY22), parseFloat(bTable[1].FY23), parseFloat(bTable[1].FY24)] : [11.8, 13.4, 15.1, 16.9, 18.5], borderColor: '#3B82F6', tension: 0.2 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      // c) Growth
+      let cHtml = `<thead><tr><th>Growth Metric</th><th>Value</th><th>Trend</th></tr></thead><tbody>`;
+      s2.c_growth_metrics.metrics.forEach(m => {
+        cHtml += `<tr><td><strong>${m.label}</strong></td><td class="cell-green">${m.val}</td><td>${m.trend}</td></tr>`;
+      });
+      cHtml += `</tbody>`;
+      document.getElementById('tableGrowthMetrics').innerHTML = cHtml;
+      document.getElementById('boxGrowthTakeaway').innerHTML = `<strong>Trend Analysis:</strong> ${s2.c_growth_metrics.trend_analysis}<br><strong>Key Takeaways:</strong> ${s2.c_growth_metrics.key_takeaways}`;
+
+      // d) Balance Sheet
+      const dTable = s2.d_balance_sheet_strength.hist_table;
+      let dHtml = `<thead><tr><th>Metric</th><th>FY24</th><th>FY23</th><th>FY22</th><th>FY21</th><th>FY20</th><th>Trend</th></tr></thead><tbody>`;
+      dTable.forEach(row => {
+        dHtml += `<tr><td><strong>${row.metric}</strong></td><td class="cell-green">${row.FY24}</td><td>${row.FY23}</td><td>${row.FY22}</td><td>${row.FY21}</td><td>${row.FY20}</td><td>${row.trend}</td></tr>`;
+      });
+      dHtml += `</tbody>`;
+      document.getElementById('tableDebtEquityHist').innerHTML = dHtml;
+      document.getElementById('boxDebtTakeaway').innerHTML = `<strong>Trend Analysis:</strong> ${s2.d_balance_sheet_strength.trend_analysis}<br><strong>Key Takeaways:</strong> ${s2.d_balance_sheet_strength.key_takeaways}`;
+
+      // f) Dividend
+      let fHtml = `<thead><tr><th>Dividend Metric</th><th>Value</th><th>Trend</th></tr></thead><tbody>`;
+      s2.f_dividend.metrics.forEach(m => {
+        fHtml += `<tr><td><strong>${m.label}</strong></td><td>${m.val}</td><td>${m.trend}</td></tr>`;
+      });
+      fHtml += `</tbody>`;
+      document.getElementById('tableDividendMetrics').innerHTML = fHtml;
+      document.getElementById('boxDividendTakeaway').innerHTML = `<strong>Trend Analysis:</strong> ${s2.f_dividend.trend_analysis}<br><strong>Key Takeaways:</strong> ${s2.f_dividend.key_takeaways}`;
+
+      // g) Efficiency
+      let gHtml = `<thead><tr><th>Efficiency Metric</th><th>Value</th><th>Trend</th></tr></thead><tbody>`;
+      s2.g_efficiency.metrics.forEach(m => {
+        gHtml += `<tr><td><strong>${m.label}</strong></td><td>${m.val}</td><td>${m.trend}</td></tr>`;
+      });
+      gHtml += `</tbody>`;
+      document.getElementById('tableEfficiencyMetrics').innerHTML = gHtml;
+      document.getElementById('boxEfficiencyTakeaway').innerHTML = `<strong>Trend Analysis:</strong> ${s2.g_efficiency.trend_analysis}<br><strong>Key Takeaways:</strong> ${s2.g_efficiency.key_takeaways}`;
+
+      // h) Peer Comparison
+      const hTable = s2.h_peer_valuation.peer_table;
+      let hHtml = `<thead><tr><th>Company</th><th>P/E Ratio</th><th>ROCE %</th><th>Debt / Equity</th></tr></thead><tbody>`;
+      hTable.forEach(p => {
+        hHtml += `<tr><td><strong>${p.name}</strong></td><td>${p.pe}</td><td>${p.roce}</td><td>${p.de}</td></tr>`;
+      });
+      hHtml += `</tbody>`;
+      document.getElementById('tablePeerComparison').innerHTML = hHtml;
+      document.getElementById('boxPeerTakeaway').innerHTML = `<strong>Peer Valuation Commentary:</strong> ${s2.h_peer_valuation.qualitative_peer_commentary}`;
+    }
+
+    /* SECTION 3: QUALITATIVE */
+    function renderSec3() {
+      if (!reportPayload) return;
+      const s3 = reportPayload.section3_qualitative_analysis;
+
+      document.getElementById('listProducts').innerHTML = s3.a_business_model.core_products.map(p => `<li>${p}</li>`).join('');
+      document.getElementById('spanRevenueStreams').textContent = s3.a_business_model.revenue_streams;
+      document.getElementById('spanCompetitiveMoat').textContent = s3.a_business_model.competitive_advantages;
+      
+      const gov = s3.hard_governance_indicators;
+      document.getElementById('gridGovernanceMetrics').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Promoter Pledging %</div><div class="stat-val" style="color:var(--green);">${gov.promoter_pledge_pct}</div></div>
+        <div class="stat-card"><div class="stat-label">RPT as % of PAT</div><div class="stat-val">${gov.rpt_as_pct_pat}</div></div>
+        <div class="stat-card"><div class="stat-label">Auditor Qualification</div><div class="stat-val" style="font-size:12px; color:var(--green);">${gov.auditor_qualification_flag}</div></div>
+      `;
+      document.getElementById('boxGovernanceTakeaway').innerHTML = `<strong>Governance Risk Audit:</strong> ${gov.governance_assessment}`;
+
+      document.getElementById('pManagementQuality').textContent = s3.b_management_quality.executive_track_record;
+      document.getElementById('pGrowthStrategy').textContent = `${s3.c_growth_strategy.expansion_plans} ${s3.c_growth_strategy.rd_initiatives}`;
+    }
+
+    /* SECTION 4: SHAREHOLDING PATTERN */
+    function renderSec4() {
+      if (!reportPayload) return;
+      const s4 = reportPayload.section4_shareholding_pattern;
+
+      let shHtml = `<thead><tr><th>Quarter</th><th>Promoters</th><th>FIIs</th><th>DIIs</th><th>Government</th><th>Public</th></tr></thead><tbody>`;
+      s4.pattern_table.forEach(r => {
+        shHtml += `<tr><td><strong>${r.quarter}</strong></td><td>${r.promoters}</td><td class="cell-green">${r.fiis}</td><td class="cell-green">${r.diis}</td><td>${r.govt}</td><td>${r.public}</td></tr>`;
+      });
+      shHtml += `</tbody>`;
+      document.getElementById('tableShareholdingPattern').innerHTML = shHtml;
+      document.getElementById('boxShareholdingTakeaway').innerHTML = `<strong>Institutional Shareholding Analysis:</strong> ${s4.analysis_commentary}`;
+
+      const ctxSh = document.getElementById('canvasShareholdingChart');
+      if (ctxSh) {
+        const latest = s4.pattern_table[0] || { promoters: '75%', fiis: '2.7%', diis: '12.8%', public: '9.5%' };
+        charts.sh = new Chart(ctxSh, {
+          type: 'doughnut',
+          data: {
+            labels: ['Promoters', 'FIIs', 'DIIs', 'Public'],
+            datasets: [{
+              data: [parseFloat(latest.promoters), parseFloat(latest.fiis), parseFloat(latest.diis), parseFloat(latest.public)],
+              backgroundColor: ['#D4AF37', '#10B981', '#3B82F6', '#94A3B8']
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+    }
+
+    /* SECTION 5: INVESTMENT THESIS */
+    function renderSec5() {
+      if (!reportPayload) return;
+      const s5 = reportPayload.section5_investment_thesis;
+
+      document.getElementById('listGrowthDrivers').innerHTML = s5.key_growth_drivers.map(d => `<li>${d}</li>`).join('');
+      document.getElementById('listStockCatalysts').innerHTML = s5.stock_catalysts.map(c => `<li>${c}</li>`).join('');
+      document.getElementById('pIndustryPositioning').textContent = s5.industry_positioning;
+    }
+
+    /* SECTION 6: VALUATION & RECOMMENDATION */
+    function renderSec6() {
+      if (!reportPayload) return;
+      const s6 = reportPayload.section6_valuation_recommendation;
+
+      // 6. Valuation Scenario Matrix
+      const scTable = s6.scenario_valuation_matrix || [];
+      let scHtml = `<thead><tr><th>Valuation Scenario</th><th>Target Price (₹)</th><th>Upside / Downside %</th><th>Core Operational Assumptions</th></tr></thead><tbody>`;
+      scTable.forEach(sc => {
+        const isBear = sc.scenario.includes('Bear');
+        scHtml += `<tr>
+          <td><strong>${sc.scenario}</strong></td>
+          <td><strong style="color:var(${isBear ? '--red' : '--gold'}); font-size:13px;">${sc.target_price}</strong></td>
+          <td class="${isBear ? 'cell-red' : 'cell-green'}">${sc.upside_downside}</td>
+          <td>${sc.assumptions}</td>
+        </tr>`;
+      });
+      scHtml += `</tbody>`;
+      document.getElementById('tableValuationScenarios').innerHTML = scHtml;
+
+      // SOTP Table
+      let vHtml = `<thead><tr><th>Business Segment / Method</th><th>Fair Value per Share (₹)</th><th>Valuation Basis</th></tr></thead><tbody>`;
+      s6.sotp_valuation_table.forEach(v => {
+        vHtml += `<tr><td><strong>${v.segment}</strong></td><td class="cell-green">${v.val_per_share}</td><td>${v.basis}</td></tr>`;
+      });
+      vHtml += `<tr><td><strong>COMBINED FAIR VALUE ESTIMATE</strong></td><td><strong style="color:var(--gold); font-size:14px;">${s6.fair_value_estimate}</strong></td><td>Sum-of-the-Parts (SOTP) Valuation</td></tr>`;
+      vHtml += `</tbody>`;
+      document.getElementById('tableSOTPValuation').innerHTML = vHtml;
+
+      document.getElementById('pValuationRationale').innerHTML = `
+        <strong>Recommendation:</strong> <span style="color:var(--green); font-weight:700;">${s6.recommendation}</span><br>
+        <strong>Base Case Target Price:</strong> ${s6.fair_value_estimate} (${s6.upside_potential} upside potential)<br>
+        <strong>Investment Horizon:</strong> ${s6.investment_horizon}<br><br>
+        <strong>Detailed Rationale:</strong> ${s6.rationale}
+      `;
+    }
+
+    /* SECTION 7: CONCLUSION */
+    function renderSec7() {
+      if (!reportPayload) return;
+      const s7 = reportPayload.section7_conclusion;
+      document.getElementById('pConclusionSummary').textContent = s7.summary_statement;
+      document.getElementById('pConclusionFinal').textContent = s7.final_recommendation;
+    }
+
+    /* SECTION 8: AI POWERED NEWS READER */
+    function renderSec8() {
+      if (!reportPayload) return;
+      const s8 = reportPayload.section8_news_catalysts;
+      if (!s8) return;
+
+      const badgeTop = document.getElementById('badgeAiSentimentTop');
+      if (badgeTop) {
+        badgeTop.textContent = s8.sentiment_badge || '🟢 Bullish';
+        const isBear = (s8.composite_sentiment_score < -0.1);
+        badgeTop.style.color = isBear ? 'var(--red)' : 'var(--green)';
+        badgeTop.style.borderColor = isBear ? 'rgba(239,68,68,0.4)' : 'rgba(34,197,94,0.4)';
+        badgeTop.style.background = isBear ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)';
+      }
+
+      const lblEngine = document.getElementById('lblAiEngine');
+      if (lblEngine && s8.ai_engine_used) lblEngine.textContent = s8.ai_engine_used;
+
+      const scoreVal = document.getElementById('valAiCompositeScore');
+      if (scoreVal) {
+        const sc = s8.composite_sentiment_score;
+        scoreVal.textContent = (sc > 0 ? `+${sc.toFixed(2)}` : sc.toFixed(2));
+        scoreVal.style.color = sc >= 0 ? 'var(--green)' : 'var(--red)';
+      }
+
+      const domCat = document.getElementById('valDominantCatalyst');
+      if (domCat) domCat.textContent = s8.dominant_catalyst || 'Order Inflows';
+
+      const pol = document.getElementById('valNewsPolarity');
+      if (pol) pol.textContent = `${s8.bullish_count || 0} 🟢 / ${s8.bearish_count || 0} 🔴 / ${s8.neutral_count || 0} 🔵`;
+
+      const totNews = document.getElementById('valTotalNewsCount');
+      if (totNews) totNews.textContent = `${s8.total_news_analyzed || (s8.news_catalysts ? s8.news_catalysts.length : 0)} Articles`;
+
+      const stream = document.getElementById('containerAiNewsStream');
+      if (stream) {
+        const items = s8.news_catalysts || [];
+        if (!items.length) {
+          stream.innerHTML = `<div style="font-family:var(--font-mono); font-size:11px; color:var(--dim); padding:16px;">No recent corporate news items detected for this ticker.</div>`;
+        } else {
+          stream.innerHTML = items.map(item => {
+            const isBull = (item.sentiment === 'Bullish');
+            const isBear = (item.sentiment === 'Bearish');
+            const sentColor = isBull ? 'var(--green)' : (isBear ? 'var(--red)' : 'var(--teal)');
+            const sentBg = isBull ? 'rgba(34,197,94,0.12)' : (isBear ? 'rgba(239,68,68,0.12)' : 'rgba(45,212,191,0.12)');
+            const scoreSign = (typeof item.sentiment_score === 'number' && item.sentiment_score > 0) ? `+${item.sentiment_score.toFixed(2)}` : (item.sentiment_score || '0.00');
+
+            return `
+              <div style="background:var(--surface); border:1px solid var(--border); border-left:4px solid ${sentColor}; border-radius:6px; padding:16px; transition:transform 0.2s ease;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+                  <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <span style="font-family:var(--font-mono); font-size:9px; color:var(--dim); text-transform:uppercase; background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:3px;">
+                      📰 ${item.source || 'Financial Press'}
+                    </span>
+                    <span style="font-family:var(--font-mono); font-size:9px; color:var(--muted);">
+                      🕒 ${item.published_at || 'Recent'}
+                    </span>
+                    <span style="font-family:var(--font-mono); font-size:9px; font-weight:700; padding:2px 8px; border-radius:3px; background:${sentBg}; color:${sentColor};">
+                      ${item.sentiment || 'Neutral'} (${scoreSign})
+                    </span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <span style="font-family:var(--font-mono); font-size:9px; color:var(--gold); background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); padding:2px 8px; border-radius:3px;">
+                      ${item.catalyst_category || 'Corporate Action'}
+                    </span>
+                    <span style="font-family:var(--font-mono); font-size:9px; color:#fff; background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:3px;">
+                      Impact: ${item.material_impact || 'Medium'}
+                    </span>
+                  </div>
+                </div>
+
+                <a href="${item.link || '#'}" target="_blank" rel="noopener noreferrer" style="font-family:var(--font-display); font-size:14px; font-weight:700; color:var(--text); text-decoration:none; display:block; margin-bottom:8px; line-height:1.4;">
+                  ${item.title || 'Corporate Announcement'}
+                </a>
+
+                <div style="background:rgba(8,13,24,0.6); border-radius:4px; padding:10px 12px; border-left:2px solid var(--teal);">
+                  <div style="font-family:var(--font-mono); font-size:9px; color:var(--teal); font-weight:700; text-transform:uppercase; margin-bottom:3px;">
+                    🤖 AI Fundamental Takeaway · Horizon: ${item.catalyst_horizon || '6-12M'}
+                  </div>
+                  <div style="font-size:11px; color:var(--text); line-height:1.6;">
+                    ${item.fundamental_takeaway || 'Material fundamental event with potential impact on upcoming quarter earnings.'}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      const boxSynth = document.getElementById('boxAiNewsSynthesis');
+      if (boxSynth) {
+        boxSynth.innerHTML = `<strong>AI Fundamental Catalyst Synthesis:</strong> ${s8.analysis_commentary || 'Live corporate news streams demonstrate robust fundamental tailwinds.'}`;
+      }
+    }
+
+    function searchCustomStock() {
+      const input = document.getElementById('topStockInput');
+      const val = (input && input.value) ? input.value.trim().toUpperCase() : '';
+      if (!val) return;
+      window.location.href = `/step4-dashboard.html?ticker=${encodeURIComponent(val)}`;
+    }
+
+    async function downloadPDFReport() {
+      const btn = document.getElementById('btnDownloadPDF');
+      const originalText = btn ? btn.innerHTML : '📥 Download Full PDF Report';
+      if (btn) {
+        btn.innerHTML = '⏳ Generating Institutional PDF...';
+        btn.disabled = true;
+      }
+
+      // 1. Render all 8 sections to ensure full DOM and charts are populated
+      renderSec2();
+      renderSec3();
+      renderSec4();
+      renderSec5();
+      renderSec6();
+      renderSec7();
+      renderSec8();
+
+      // 2. Temporarily display all sections for full report export
+      const allPanes = document.querySelectorAll('.tab-pane');
+      const prevDisplays = [];
+      allPanes.forEach(pane => {
+        prevDisplays.push(pane.style.display);
+        pane.style.display = 'block';
+      });
+
+      const rawName = (reportPayload && (reportPayload.stock_name || reportPayload.ticker)) ? (reportPayload.stock_name || reportPayload.ticker) : 'Equity';
+      const cleanStockName = rawName.replace(/\.NS|\.BO/gi, '').replace(/\bLtd\b|\bLimited\b/gi, '').trim().toUpperCase();
+      const pdfFilename = `${cleanStockName || 'EQUITY'} Equity Analysis Report By NV Analytics Research Desk.pdf`;
+
+      const opt = {
+        margin: [8, 8, 8, 8],
+        filename: pdfFilename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+
+      try {
+        const element = document.getElementById('reportExportContainer');
+        if (window.html2pdf) {
+          await html2pdf().set(opt).from(element).save();
+        } else {
+          window.print();
+        }
+      } catch (err) {
+        console.error('html2pdf generation error, falling back to window.print():', err);
+        window.print();
+      } finally {
+        // Restore tab views
+        allPanes.forEach((pane, idx) => {
+          pane.style.display = prevDisplays[idx];
+        });
+        if (btn) {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      }
+    }
+
+    function triggerPrint() {
+      const rawName = (reportPayload && (reportPayload.stock_name || reportPayload.ticker)) ? (reportPayload.stock_name || reportPayload.ticker) : 'VOLTAS';
+      const cleanStockName = rawName.replace(/\.NS|\.BO/gi, '').replace(/\bLtd\b|\bLimited\b/gi, '').trim().toUpperCase();
+      document.title = `${cleanStockName || 'VOLTAS'} Equity Analysis Report By NV Analytics Research Desk`;
+
+      // 1. Render all 8 sections to ensure full DOM and charts are populated
+      renderSec2();
+      renderSec3();
+      renderSec4();
+      renderSec5();
+      renderSec6();
+      renderSec7();
+      renderSec8();
+
+      // 2. Temporarily display all sections for complete multi-page document
+      const allPanes = document.querySelectorAll('.tab-pane');
+      const prevDisplays = [];
+      allPanes.forEach(pane => {
+        prevDisplays.push(pane.style.display);
+        pane.style.display = 'block';
+      });
+
+      window.print();
+
+      setTimeout(() => {
+        allPanes.forEach((pane, idx) => {
+          pane.style.display = prevDisplays[idx];
+        });
+      }, 1000);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initReport();
+    });
+  </script>
+  </div> <!-- /#reportExportContainer -->
+</body>
+</html>

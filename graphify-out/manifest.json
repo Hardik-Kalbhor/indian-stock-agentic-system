@@ -1,0 +1,44 @@
+{
+  "backend/agents/step1_industry_identifier.py": {
+    "mtime": 1785827590.3382883,
+    "seen": 1788158147.7703822,
+    "ast_hash": "a532183f474b6dc6d07b257eb2ec8cf4",
+    "semantic_hash": "a532183f474b6dc6d07b257eb2ec8cf4"
+  },
+  "backend/agents/step2_industry_shortlist.py": {
+    "mtime": 1787285599.4743516,
+    "seen": 1788158147.7703848,
+    "ast_hash": "d28a2ee7864e6a2bb88f5ef82115c781",
+    "semantic_hash": "d28a2ee7864e6a2bb88f5ef82115c781"
+  },
+  "backend/agents/step3_company_comparator.py": {
+    "mtime": 1786003649.9425535,
+    "seen": 1788158147.770386,
+    "ast_hash": "679115a2eae61fea2aa4e42e58f496eb",
+    "semantic_hash": "679115a2eae61fea2aa4e42e58f496eb"
+  },
+  "backend/agents/step4_stock_researcher.py": {
+    "mtime": 1787548666.4080265,
+    "seen": 1788158147.770387,
+    "ast_hash": "c0b9f3ab23baed95616d2d5db198e7ff",
+    "semantic_hash": "c0b9f3ab23baed95616d2d5db198e7ff"
+  },
+  "backend/main.py": {
+    "mtime": 1787548672.6403165,
+    "seen": 1788158147.770388,
+    "ast_hash": "6d87a7674455a0e9463ecc1a58c7c2e4",
+    "semantic_hash": "6d87a7674455a0e9463ecc1a58c7c2e4"
+  },
+  "backend/services/market_data_service.py": {
+    "mtime": 1787290049.849026,
+    "seen": 1788158147.770388,
+    "ast_hash": "34a7667688017252299013c87ad68e4d",
+    "semantic_hash": "34a7667688017252299013c87ad68e4d"
+  },
+  "backend/services/news_engine.py": {
+    "mtime": 1787548686.8395803,
+    "seen": 1788158147.770389,
+    "ast_hash": "86a7c70ac0e939e1508b6482b44ff745",
+    "semantic_hash": "86a7c70ac0e939e1508b6482b44ff745"
+  }
+}

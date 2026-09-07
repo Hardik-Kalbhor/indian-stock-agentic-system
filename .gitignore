@@ -1,0 +1,62 @@
+# Environment & Secrets (NEVER COMMIT)
+.env
+*.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE & OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Caching & Local DBs
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+backend/data/*
+!backend/data/.gitkeep
+*.db
+backend/data/trading_memory.log
+
+# Temporary / Scratch Outputs
+chat_payload.json
+chat_response.json
+last_chat_context.json
+pipeline_out.json
+graphify-out/cache/

@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | nv analytics — Indian Stock Market Agentic AI</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Supabase JS Client (v2) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Local Supabase Auth Helper -->
+  <script src="/static/supabase-auth.js" onerror="this.onerror=null;this.src='supabase-auth.js';"></script>
+
+  <style>
+    :root {
+      --color-primary: #01696f;
+      --color-primary-light: #4f98a3;
+      --color-primary-dark: #004d52;
+      --color-bg: #0b0f14;
+      --color-surface: #121820;
+      --color-surface-2: #1a2330;
+      --color-surface-3: #222e40;
+      --color-border: #26354a;
+      --color-border-hover: #3b506e;
+      --color-text-primary: #f1f5f9;
+      --color-text-muted: #94a3b8;
+      --color-text-dim: #64748b;
+      --color-green: #10b981;
+      --color-green-glow: rgba(16, 185, 129, 0.2);
+      --color-red: #ef4444;
+      --color-red-glow: rgba(239, 68, 68, 0.2);
+      --color-amber: #f59e0b;
+      --color-teal: #14b8a6;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --radius-card: 16px;
+      --radius-input: 10px;
+      --radius-pill: 30px;
+      --shadow-glow: 0 0 35px rgba(1, 105, 111, 0.25);
+      --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.55);
+      --transition: all 180ms ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(1, 105, 111, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(20, 184, 166, 0.1) 0%, transparent 40%),
+        linear-gradient(to bottom, #070a0e, var(--color-bg));
+      background-attachment: fixed;
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 1080px;
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      min-height: 640px;
+      position: relative;
+    }
+
+    @media (max-width: 900px) {
+      .auth-container {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+      }
+      .brand-pane {
+        display: none;
+      }
+    }
+
+    /* LEFT BRAND PANE */
+    .brand-pane {
+      background: linear-gradient(145deg, #0d1520 0%, #152233 100%);
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid var(--color-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-pane::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      right: -80px;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(1, 105, 111, 0.35) 0%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
+    .brand-title span {
+      color: var(--color-primary-light);
+    }
+
+    .brand-content {
+      margin: 40px 0;
+    }
+
+    .brand-tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-teal);
+      background: rgba(20, 184, 166, 0.12);
+      border: 1px solid rgba(20, 184, 166, 0.3);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 20px;
+    }
+
+    .brand-headline {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      line-height: 1.25;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .brand-desc {
+      color: var(--color-text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .feature-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-teal);
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .feature-text h4 {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 2px;
+    }
+
+    .feature-text p {
+      font-size: 0.78rem;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    .brand-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--color-text-dim);
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .market-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--color-green);
+      font-weight: 600;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-green);
+      box-shadow: 0 0 10px var(--color-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); }
+      100% { opacity: 0.6; transform: scale(0.9); }
+    }
+
+    /* RIGHT AUTH PANE */
+    .auth-pane {
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: var(--color-surface);
+      position: relative;
+    }
+
+    @media (max-width: 600px) {
+      .auth-pane {
+        padding: 32px 24px;
+      }
+    }
+
+    .auth-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .btn-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .btn-back-link:hover {
+      color: var(--color-primary-light);
+    }
+
+    .config-trigger-btn {
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-muted);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .config-trigger-btn:hover {
+      border-color: var(--color-primary-light);
+      color: var(--color-text-primary);
+    }
+
+    .auth-header {
+      margin-bottom: 24px;
+    }
+
+    .auth-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+      font-size: 0.84rem;
+      color: var(--color-text-muted);
+    }
+
+    /* TABS */
+    .auth-tabs {
+      display: flex;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .tab-btn.active {
+      background: var(--color-primary);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(1, 105, 111, 0.4);
+    }
+
+    /* ALERTS */
+    .alert-box {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      margin-bottom: 20px;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.45;
+    }
+
+    .alert-box.error {
+      display: flex;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    .alert-box.success {
+      display: flex;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #86efac;
+    }
+
+    .alert-box.warning {
+      display: flex;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fde68a;
+    }
+
+    .alert-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: inherit;
+      opacity: 0.7;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    /* FORMS */
+    .auth-form {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .auth-form.active {
+      display: flex;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-label a {
+      color: var(--color-primary-light);
+      text-decoration: none;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .form-label a:hover {
+      text-decoration: underline;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-input);
+      padding: 11px 14px;
+      font-size: 0.88rem;
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      border-color: var(--color-teal);
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+      background: var(--color-surface-3);
+    }
+
+    .btn-toggle-pwd {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--color-text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 4px;
+    }
+    .btn-toggle-pwd:hover {
+      color: var(--color-text-primary);
+    }
+
+    /* Password Strength Indicator */
+    .strength-meter {
+      height: 4px;
+      width: 100%;
+      background: var(--color-surface-2);
+      border-radius: 2px;
+      margin-top: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+    .strength-bar {
+      height: 100%;
+      width: 0%;
+      transition: all 0.3s ease;
+    }
+
+    .remember-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .checkbox-label input {
+      accent-color: var(--color-primary);
+      width: 15px;
+      height: 15px;
+    }
+
+    /* SUBMIT BUTTON */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-teal));
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: var(--radius-input);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(1, 105, 111, 0.3);
+      margin-top: 4px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(20, 184, 166, 0.35);
+      opacity: 0.96;
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* DIVIDER */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: var(--color-text-dim);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 20px 0;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .auth-divider span {
+      padding: 0 12px;
+    }
+
+    /* OAUTH BUTTONS */
+    .oauth-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-oauth {
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 10px 14px;
+      border-radius: var(--radius-input);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .btn-oauth:hover {
+      background: var(--color-surface-3);
+      border-color: var(--color-border-hover);
+      transform: translateY(-1px);
+    }
+
+    /* LOGGED IN STATE CARD */
+    .logged-in-card {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 24px;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-teal);
+      border-radius: var(--radius-card);
+      gap: 14px;
+    }
+
+    .user-avatar-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-teal));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);
+    }
+
+    /* CONFIG MODAL */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .config-modal {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      width: 100%;
+      max-width: 520px;
+      padding: 28px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .modal-body p {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .config-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-secondary {
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-muted);
+      padding: 8px 16px;
+      border-radius: var(--radius-input);
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    .btn-primary-sm {
+      background: var(--color-primary);
+      border: none;
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: var(--radius-input);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-container">
+    
+    <!-- LEFT: BRAND & CAPABILITIES SHOWCASE -->
+    <div class="brand-pane">
+      <div>
+        <div class="brand-header">
+          <div class="brand-logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </div>
+          <div class="brand-title">nv <span>analytics</span></div>
+        </div>
+
+        <div class="brand-content">
+          <div class="brand-tagline">
+            <span>⚡ Institutional AI Platform</span>
+          </div>
+          <h1 class="brand-headline">Multi-Agent Intelligence for Indian Equities.</h1>
+          <p class="brand-desc">
+            Autonomous multi-agent orchestration for macro scanning, smart-money F&O tracking, and institutional-grade equity valuation across NSE and BSE.
+          </p>
+
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">🔍</div>
+              <div class="feature-text">
+                <h4>Automated Industry Screener</h4>
+                <p>100-point diagnostic scoring, sector ranking, and hard filter screening.</p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-icon">⚖️</div>
+              <div class="feature-text">
+                <h4>Multi-Stock Deep Comparator</h4>
+                <p>DuPont ROE audit, risk-adjusted Sharpe rankings, and catalyst scoring.</p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-icon">🛡️</div>
+              <div class="feature-text">
+                <h4>Secure Cloud Supabase Auth</h4>
+                <p>Row-level security, encrypted JWT tokens, and instant team workspace access.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brand-footer">
+        <div class="market-status-badge">
+          <span class="pulse-dot"></span>
+          <span>NSE / BSE Active Live Engine</span>
+        </div>
+        <div>v2.2.0 Enterprise</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: SUPABASE AUTHENTICATION PANEL -->
+    <div class="auth-pane">
+      <div>
+        <!-- TOP ACTIONS BAR -->
+        <div class="auth-top-bar">
+          <a href="/" class="btn-back-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back to Dashboard
+          </a>
+
+          <button class="config-trigger-btn" onclick="openConfigModal()" title="Configure Supabase Project Credentials">
+            <span id="configIndicatorDot" style="width:7px; height:7px; border-radius:50%; background:var(--color-amber);"></span>
+            <span>Supabase Config</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          </button>
+        </div>
+
+        <!-- AUTH HEADER -->
+        <div class="auth-header">
+          <h2 class="auth-title" id="authTitleText">Welcome Back</h2>
+          <p class="auth-subtitle" id="authSubtitleText">Sign in to access institutional screener, models & chat agents.</p>
+        </div>
+
+        <!-- NOTIFICATION / ALERT CONTAINER -->
+        <div class="alert-box" id="alertBox">
+          <span id="alertIcon">⚠️</span>
+          <span id="alertMessage">Alert message</span>
+          <button class="alert-close" onclick="hideAlert()">&times;</button>
+        </div>
+
+        <!-- ACTIVE SESSION VIEW (IF ALREADY LOGGED IN) -->
+        <div class="logged-in-card" id="loggedInCard">
+          <div class="user-avatar-circle" id="userAvatar">NV</div>
+          <div>
+            <h3 style="color:#fff; font-size:1rem; margin-bottom:4px;" id="userNameDisplay">User Name</h3>
+            <p style="color:var(--color-text-muted); font-size:0.8rem;" id="userEmailDisplay">user@example.com</p>
+          </div>
+          <div style="display:flex; gap:10px; width:100%; margin-top:8px;">
+            <a href="/" style="flex:1;" class="btn-submit" style="text-decoration:none;">
+              🚀 Open Dashboard
+            </a>
+            <button onclick="handleSignOut()" class="btn-oauth" style="flex:0.6; color:var(--color-red);">
+              Sign Out
+            </button>
+          </div>
+        </div>
+
+        <!-- FORM SWITCHER TABS -->
+        <div class="auth-tabs" id="authTabsBar">
+          <button class="tab-btn active" id="tabSignIn" onclick="switchAuthTab('signin')">Sign In</button>
+          <button class="tab-btn" id="tabSignUp" onclick="switchAuthTab('signup')">Create Account</button>
+          <button class="tab-btn" id="tabMagic" onclick="switchAuthTab('magic')">Magic Link</button>
+        </div>
+
+        <!-- TAB 1: SIGN IN FORM -->
+        <form class="auth-form active" id="formSignIn" onsubmit="handleSignIn(event)">
+          <div class="form-group">
+            <label class="form-label" for="signinEmail">Work or Personal Email</label>
+            <input type="email" id="signinEmail" class="form-input" placeholder="name@domain.com" required autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signinPassword">
+              <span>Password</span>
+              <a onclick="switchAuthTab('magic')">Forgot password?</a>
+            </label>
+            <div class="input-wrapper">
+              <input type="password" id="signinPassword" class="form-input" placeholder="••••••••••••" required autocomplete="current-password">
+              <button type="button" class="btn-toggle-pwd" onclick="togglePasswordVisibility('signinPassword', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="remember-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="signinRemember" checked>
+              <span>Keep me signed in</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btnSubmitSignIn">
+            <span class="btn-spinner" id="spinnerSignIn"></span>
+            <span id="textSubmitSignIn">Sign In to nv analytics</span>
+          </button>
+        </form>
+
+        <!-- TAB 2: SIGN UP FORM -->
+        <form class="auth-form" id="formSignUp" onsubmit="handleSignUp(event)">
+          <div class="form-group">
+            <label class="form-label" for="signupName">Full Name</label>
+            <input type="text" id="signupName" class="form-input" placeholder="e.g. Ramesh Kumar" required autocomplete="name">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signupEmail">Email Address</label>
+            <input type="email" id="signupEmail" class="form-input" placeholder="name@domain.com" required autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signupPassword">Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="signupPassword" class="form-input" placeholder="At least 6 characters" required minlength="6" autocomplete="new-password" oninput="checkPasswordStrength(this.value)">
+              <button type="button" class="btn-toggle-pwd" onclick="togglePasswordVisibility('signupPassword', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+            <div class="strength-meter">
+              <div class="strength-bar" id="strengthBar"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signupConfirmPassword">Confirm Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="signupConfirmPassword" class="form-input" placeholder="Re-enter password" required minlength="6" autocomplete="new-password">
+              <button type="button" class="btn-toggle-pwd" onclick="togglePasswordVisibility('signupConfirmPassword', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btnSubmitSignUp">
+            <span class="btn-spinner" id="spinnerSignUp"></span>
+            <span id="textSubmitSignUp">Create Free Account</span>
+          </button>
+        </form>
+
+        <!-- TAB 3: MAGIC LINK FORM -->
+        <form class="auth-form" id="formMagic" onsubmit="handleMagicLink(event)">
+          <div class="form-group">
+            <label class="form-label" for="magicEmail">Enter Your Registered Email</label>
+            <input type="email" id="magicEmail" class="form-input" placeholder="name@domain.com" required autocomplete="email">
+            <span style="font-size:0.75rem; color:var(--color-text-dim); margin-top:4px;">
+              We will send a secure passwordless sign-in link to your inbox.
+            </span>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btnSubmitMagic">
+            <span class="btn-spinner" id="spinnerMagic"></span>
+            <span id="textSubmitMagic">Send Magic Sign-In Link</span>
+          </button>
+        </form>
+
+        <!-- SOCIAL AUTH SECTION -->
+        <div id="socialAuthSection">
+          <div class="auth-divider">
+            <span>Or continue with</span>
+          </div>
+
+          <div class="oauth-grid">
+            <button type="button" class="btn-oauth" onclick="handleOAuth('google')">
+              <svg width="16" height="16" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.25 21.36 7.31 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.94 0 12s.46 3.84 1.26 5.42l4.02-3.15z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+              </svg>
+              <span>Google</span>
+            </button>
+
+            <button type="button" class="btn-oauth" onclick="handleOAuth('github')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+              </svg>
+              <span>GitHub</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM TERMS NOTE -->
+      <div style="font-size: 0.72rem; color: var(--color-text-dim); text-align: center; margin-top: 24px;">
+        By signing in, you agree to nv analytics Terms of Service & Privacy Policy.<br>
+        Equity research engine for Indian capital markets.
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIGURATION MODAL (FOR TESTING & DIRECT SUPABASE KEY ENTRY) -->
+  <div class="modal-backdrop" id="configModal">
+    <div class="config-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <span>⚙️ Supabase Project Settings</span>
+        </h3>
+        <button class="modal-close-btn" onclick="closeConfigModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Configure your Supabase Project URL and public Anonymous Key. You can set them here for your browser, or in the backend <code>.env</code> file.
+        </p>
+
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" for="cfgUrl">Supabase Project URL</label>
+          <input type="url" id="cfgUrl" class="form-input" placeholder="https://yourproject.supabase.co">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" for="cfgKey">Supabase Anon Key (Public)</label>
+          <input type="password" id="cfgKey" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+        </div>
+
+        <div id="cfgStatusMsg" style="font-size:0.78rem; margin-bottom:8px; display:none;"></div>
+      </div>
+
+      <div class="config-actions">
+        <button type="button" class="btn-secondary" onclick="handleClearLocalConfig()">Reset to Server Default</button>
+        <button type="button" class="btn-primary-sm" onclick="handleSaveConfig()">Save & Test Connection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT AUTH LOGIC -->
+  <script>
+    let currentAuthMode = 'signin';
+
+    // Password strength evaluator
+    function checkPasswordStrength(val) {
+      const bar = document.getElementById('strengthBar');
+      if (!val) {
+        bar.style.width = '0%';
+        return;
+      }
+      let score = 0;
+      if (val.length >= 6) score += 25;
+      if (val.length >= 10) score += 25;
+      if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score += 25;
+      if (/[0-9]/.test(val) || /[^A-Za-z0-9]/.test(val)) score += 25;
+
+      bar.style.width = score + '%';
+      if (score <= 25) bar.style.backgroundColor = 'var(--color-red)';
+      else if (score <= 50) bar.style.backgroundColor = 'var(--color-amber)';
+      else if (score <= 75) bar.style.backgroundColor = 'var(--color-teal)';
+      else bar.style.backgroundColor = 'var(--color-green)';
+    }
+
+    // Toggle password visibility
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+      } else {
+        input.type = 'password';
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+      }
+    }
+
+    // Tab Switcher
+    function switchAuthTab(mode) {
+      currentAuthMode = mode;
+      hideAlert();
+
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+
+      const titleEl = document.getElementById('authTitleText');
+      const subtitleEl = document.getElementById('authSubtitleText');
+      const socialSection = document.getElementById('socialAuthSection');
+
+      if (mode === 'signin') {
+        document.getElementById('tabSignIn').classList.add('active');
+        document.getElementById('formSignIn').classList.add('active');
+        titleEl.textContent = 'Welcome Back';
+        subtitleEl.textContent = 'Sign in to access institutional screener, models & chat agents.';
+        socialSection.style.display = 'block';
+      } else if (mode === 'signup') {
+        document.getElementById('tabSignUp').classList.add('active');
+        document.getElementById('formSignUp').classList.add('active');
+        titleEl.textContent = 'Create an Account';
+        subtitleEl.textContent = 'Get access to 100-point diagnostics & automated agent pipelines.';
+        socialSection.style.display = 'block';
+      } else if (mode === 'magic') {
+        document.getElementById('tabMagic').classList.add('active');
+        document.getElementById('formMagic').classList.add('active');
+        titleEl.textContent = 'Passwordless Sign In';
+        subtitleEl.textContent = 'Receive a secure, instant magic authentication link via email.';
+        socialSection.style.display = 'none';
+      }
+    }
+
+    // Alerts
+    function showAlert(type, message) {
+      const box = document.getElementById('alertBox');
+      const icon = document.getElementById('alertIcon');
+      const msg = document.getElementById('alertMessage');
+
+      box.className = `alert-box ${type}`;
+      icon.textContent = type === 'error' ? '⚠️' : (type === 'success' ? '✅' : 'ℹ️');
+      msg.textContent = message;
+      box.style.display = 'flex';
+    }
+
+    function hideAlert() {
+      const box = document.getElementById('alertBox');
+      box.style.display = 'none';
+    }
+
+    // Set button loading state
+    function setLoading(btnId, spinnerId, textId, loading, defaultText) {
+      const btn = document.getElementById(btnId);
+      const spinner = document.getElementById(spinnerId);
+      const text = document.getElementById(textId);
+
+      btn.disabled = loading;
+      spinner.style.display = loading ? 'inline-block' : 'none';
+      if (loading) {
+        text.textContent = 'Authenticating...';
+      } else {
+        text.textContent = defaultText;
+      }
+    }
+
+    // Handle Email/Password Sign In
+    async function handleSignIn(e) {
+      e.preventDefault();
+      hideAlert();
+
+      const email = document.getElementById('signinEmail').value;
+      const password = document.getElementById('signinPassword').value;
+
+      setLoading('btnSubmitSignIn', 'spinnerSignIn', 'textSubmitSignIn', true, 'Sign In to nv analytics');
+
+      try {
+        const client = await window.SupabaseAuth.getClient();
+        if (!client) {
+          showAlert('warning', 'Supabase is not yet configured. Please click "Supabase Config" in top-right to enter your Project URL and Anon Key.');
+          setLoading('btnSubmitSignIn', 'spinnerSignIn', 'textSubmitSignIn', false, 'Sign In to nv analytics');
+          return;
+        }
+
+        const data = await window.SupabaseAuth.signInWithEmail(email, password);
+        showAlert('success', 'Sign in successful! Redirecting to dashboard...');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 800);
+      } catch (err) {
+        console.error('Sign In Error:', err);
+        showAlert('error', err.message || 'Failed to sign in. Please verify your credentials.');
+      } finally {
+        setLoading('btnSubmitSignIn', 'spinnerSignIn', 'textSubmitSignIn', false, 'Sign In to nv analytics');
+      }
+    }
+
+    // Handle Sign Up
+    async function handleSignUp(e) {
+      e.preventDefault();
+      hideAlert();
+
+      const fullName = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+      if (password !== confirmPassword) {
+        showAlert('error', 'Passwords do not match. Please re-enter your password.');
+        return;
+      }
+
+      setLoading('btnSubmitSignUp', 'spinnerSignUp', 'textSubmitSignUp', true, 'Create Free Account');
+
+      try {
+        const client = await window.SupabaseAuth.getClient();
+        if (!client) {
+          showAlert('warning', 'Supabase is not configured. Click "Supabase Config" to set your project credentials.');
+          setLoading('btnSubmitSignUp', 'spinnerSignUp', 'textSubmitSignUp', false, 'Create Free Account');
+          return;
+        }
+
+        const data = await window.SupabaseAuth.signUpWithEmail(email, password, { full_name: fullName });
+        
+        // Supabase might require email confirmation or auto-login
+        if (data.session) {
+          showAlert('success', 'Account created successfully! Redirecting...');
+          setTimeout(() => { window.location.href = '/'; }, 1000);
+        } else {
+          showAlert('success', 'Account created! Please check your email to confirm your account, then sign in.');
+          setTimeout(() => { switchAuthTab('signin'); }, 2500);
+        }
+      } catch (err) {
+        console.error('Sign Up Error:', err);
+        showAlert('error', err.message || 'Failed to create account.');
+      } finally {
+        setLoading('btnSubmitSignUp', 'spinnerSignUp', 'textSubmitSignUp', false, 'Create Free Account');
+      }
+    }
+
+    // Handle Magic Link
+    async function handleMagicLink(e) {
+      e.preventDefault();
+      hideAlert();
+
+      const email = document.getElementById('magicEmail').value;
+      setLoading('btnSubmitMagic', 'spinnerMagic', 'textSubmitMagic', true, 'Send Magic Sign-In Link');
+
+      try {
+        const client = await window.SupabaseAuth.getClient();
+        if (!client) {
+          showAlert('warning', 'Supabase is not configured. Click "Supabase Config" to set your project credentials.');
+          setLoading('btnSubmitMagic', 'spinnerMagic', 'textSubmitMagic', false, 'Send Magic Sign-In Link');
+          return;
+        }
+
+        await window.SupabaseAuth.sendMagicLink(email);
+        showAlert('success', `A magic sign-in link has been sent to ${email}. Please check your inbox.`);
+      } catch (err) {
+        console.error('Magic link error:', err);
+        showAlert('error', err.message || 'Failed to send magic link.');
+      } finally {
+        setLoading('btnSubmitMagic', 'spinnerMagic', 'textSubmitMagic', false, 'Send Magic Sign-In Link');
+      }
+    }
+
+    // Handle OAuth
+    async function handleOAuth(provider) {
+      hideAlert();
+      try {
+        const client = await window.SupabaseAuth.getClient();
+        if (!client) {
+          showAlert('warning', `Supabase is not configured. Please set your Project URL & Anon Key.`);
+          return;
+        }
+        await window.SupabaseAuth.signInWithOAuth(provider);
+      } catch (err) {
+        console.error('OAuth error:', err);
+        showAlert('error', err.message || `Failed to authenticate with ${provider}.`);
+      }
+    }
+
+    // Handle Sign Out
+    async function handleSignOut() {
+      await window.SupabaseAuth.signOut();
+      window.location.reload();
+    }
+
+    // Config Modal
+    async function openConfigModal() {
+      const modal = document.getElementById('configModal');
+      const config = await window.SupabaseAuth.getConfig();
+      document.getElementById('cfgUrl').value = config.url || '';
+      document.getElementById('cfgKey').value = config.key || '';
+      document.getElementById('cfgStatusMsg').style.display = 'none';
+      modal.classList.add('active');
+    }
+
+    function closeConfigModal() {
+      document.getElementById('configModal').classList.remove('active');
+    }
+
+    async function handleSaveConfig() {
+      const url = document.getElementById('cfgUrl').value.trim();
+      const key = document.getElementById('cfgKey').value.trim();
+      const statusEl = document.getElementById('cfgStatusMsg');
+
+      if (!url || !key) {
+        statusEl.style.display = 'block';
+        statusEl.style.color = 'var(--color-red)';
+        statusEl.textContent = 'Both Project URL and Anon Key are required.';
+        return;
+      }
+
+      window.SupabaseAuth.setConfig(url, key);
+      const client = await window.SupabaseAuth.getClient();
+      if (client) {
+        statusEl.style.display = 'block';
+        statusEl.style.color = 'var(--color-green)';
+        statusEl.textContent = 'Configuration saved and client initialized successfully!';
+        updateConfigIndicator(true);
+        setTimeout(() => {
+          closeConfigModal();
+          checkExistingSession();
+        }, 800);
+      } else {
+        statusEl.style.display = 'block';
+        statusEl.style.color = 'var(--color-red)';
+        statusEl.textContent = 'Could not initialize client. Please check the URL format.';
+      }
+    }
+
+    function handleClearLocalConfig() {
+      window.SupabaseAuth.clearConfig();
+      document.getElementById('cfgUrl').value = '';
+      document.getElementById('cfgKey').value = '';
+      const statusEl = document.getElementById('cfgStatusMsg');
+      statusEl.style.display = 'block';
+      statusEl.style.color = 'var(--color-amber)';
+      statusEl.textContent = 'Local configuration cleared. Reverting to server .env settings.';
+      setTimeout(() => {
+        closeConfigModal();
+        initPage();
+      }, 700);
+    }
+
+    function updateConfigIndicator(connected) {
+      const dot = document.getElementById('configIndicatorDot');
+      if (dot) {
+        dot.style.background = connected ? 'var(--color-green)' : 'var(--color-amber)';
+      }
+    }
+
+    // Check if user has an existing session
+    async function checkExistingSession() {
+      try {
+        const user = await window.SupabaseAuth.getUser();
+        if (user) {
+          // Render logged in card
+          document.getElementById('authTabsBar').style.display = 'none';
+          document.querySelectorAll('.auth-form').forEach(f => f.style.display = 'none');
+          document.getElementById('socialAuthSection').style.display = 'none';
+
+          const card = document.getElementById('loggedInCard');
+          card.style.display = 'flex';
+
+          const name = user.user_metadata?.full_name || user.email.split('@')[0];
+          document.getElementById('userNameDisplay').textContent = name;
+          document.getElementById('userEmailDisplay').textContent = user.email;
+          document.getElementById('userAvatar').textContent = name.substring(0, 2).toUpperCase();
+
+          document.getElementById('authTitleText').textContent = 'Account Active';
+          document.getElementById('authSubtitleText').textContent = 'You are currently signed in.';
+        } else {
+          // Unauthenticated state
+          document.getElementById('authTabsBar').style.display = 'flex';
+          document.getElementById('socialAuthSection').style.display = 'block';
+          document.getElementById('loggedInCard').style.display = 'none';
+          switchAuthTab(currentAuthMode);
+        }
+      } catch (err) {
+        console.warn('Session check error:', err);
+      }
+    }
+
+    // Page initialization
+    async function initPage() {
+      const config = await window.SupabaseAuth.getConfig();
+      const hasConfig = config.url && config.key && !config.url.includes('your-project');
+      updateConfigIndicator(hasConfig);
+
+      if (!hasConfig) {
+        showAlert('warning', 'Supabase credentials are not yet configured. You can click "Supabase Config" in the top-right to add your Supabase URL & Anon Key or set them in .env.');
+      }
+
+      await checkExistingSession();
+
+      // Listen for auth events
+      window.SupabaseAuth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+          checkExistingSession();
+        } else if (event === 'SIGNED_OUT') {
+          checkExistingSession();
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>

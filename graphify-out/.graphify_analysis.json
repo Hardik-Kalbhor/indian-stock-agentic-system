@@ -1,0 +1,221 @@
+{
+  "communities": {
+    "0": [
+      "any",
+      "backend_services_news_engine",
+      "backend_services_news_engine_groqnewsscoringagent",
+      "backend_services_news_engine_groqnewsscoringagent_evaluate_news_with_ai",
+      "backend_services_news_engine_groqnewsscoringagent_fetch_google_news_rss",
+      "backend_services_news_engine_groqnewsscoringagent_fetch_live_news",
+      "backend_services_news_engine_groqnewsscoringagent_get_fallback_news",
+      "backend_services_news_engine_groqnewsscoringagent_get_ticker_sentiment_summary",
+      "backend_services_news_engine_groqnewsscoringagent_heuristic_evaluation",
+      "backend_services_news_engine_groqnewsscoringagent_init",
+      "backend_services_news_engine_groqnewsscoringagent_sanitize_ai_response",
+      "backend_services_news_engine_rationale_1",
+      "backend_services_news_engine_rationale_111",
+      "backend_services_news_engine_rationale_151",
+      "backend_services_news_engine_rationale_214",
+      "backend_services_news_engine_rationale_248",
+      "backend_services_news_engine_rationale_311",
+      "backend_services_news_engine_rationale_42",
+      "backend_services_news_engine_rationale_61"
+    ],
+    "1": [
+      "backend_agents_step3_company_comparator",
+      "backend_agents_step3_company_comparator_companycomparatoragent",
+      "backend_agents_step3_company_comparator_companycomparatoragent_init",
+      "backend_agents_step3_company_comparator_companycomparatoragent_run",
+      "backend_agents_step3_company_comparator_rationale_9",
+      "backend_agents_step4_stock_researcher",
+      "backend_agents_step4_stock_researcher_rationale_9",
+      "backend_agents_step4_stock_researcher_stockresearcheragent",
+      "backend_agents_step4_stock_researcher_stockresearcheragent_init",
+      "backend_agents_step4_stock_researcher_stockresearcheragent_run",
+      "backend_services_market_data_service",
+      "backend_services_market_data_service_marketdataservice",
+      "backend_services_market_data_service_marketdataservice_calculate_technicals",
+      "backend_services_market_data_service_marketdataservice_generate_mock_price_series",
+      "backend_services_market_data_service_marketdataservice_get_company_fundamentals",
+      "backend_services_market_data_service_marketdataservice_get_sector_tickers",
+      "backend_services_market_data_service_marketdataservice_get_stock_data",
+      "dataframe"
+    ],
+    "2": [
+      "backend_agents_step2_industry_shortlist",
+      "backend_agents_step2_industry_shortlist_get_cap_category",
+      "backend_agents_step2_industry_shortlist_industryshortlistagent",
+      "backend_agents_step2_industry_shortlist_industryshortlistagent_init",
+      "backend_agents_step2_industry_shortlist_industryshortlistagent_run",
+      "backend_agents_step2_industry_shortlist_parse_mcap_cr",
+      "backend_agents_step2_industry_shortlist_parse_price",
+      "backend_agents_step2_industry_shortlist_rationale_10",
+      "backend_agents_step2_industry_shortlist_rationale_18",
+      "backend_agents_step2_industry_shortlist_rationale_26",
+      "backend_agents_step2_industry_shortlist_rationale_40"
+    ],
+    "3": [
+      "backend_main",
+      "backend_main_get_stock_news",
+      "backend_main_health_check",
+      "backend_main_rationale_84",
+      "backend_main_read_root",
+      "backend_main_read_step2_dashboard",
+      "backend_main_read_step3_dashboard",
+      "backend_main_read_step4_dashboard",
+      "get"
+    ],
+    "4": [
+      "backend_agents_step1_industry_identifier",
+      "backend_agents_step1_industry_identifier_industryidentifieragent",
+      "backend_agents_step1_industry_identifier_industryidentifieragent_init",
+      "backend_agents_step1_industry_identifier_industryidentifieragent_run",
+      "backend_agents_step1_industry_identifier_rationale_7",
+      "backend_main_execute_full_pipeline",
+      "backend_main_rationale_91"
+    ],
+    "5": [
+      "backend_main_execute_step1",
+      "backend_main_execute_step3",
+      "backend_main_rationale_55",
+      "backend_main_rationale_72",
+      "backend_main_step3request",
+      "post"
+    ],
+    "6": [
+      "backend_main_execute_step4",
+      "backend_main_fullpipelinerequest",
+      "backend_main_rationale_78",
+      "backend_main_step4request",
+      "basemodel"
+    ],
+    "7": [
+      "backend_main_execute_step2",
+      "backend_main_rationale_61",
+      "backend_main_step2request"
+    ]
+  },
+  "cohesion": {
+    "0": 0.17543859649122806,
+    "1": 0.19607843137254902,
+    "2": 0.23636363636363636,
+    "3": 0.3611111111111111,
+    "4": 0.2857142857142857,
+    "5": 0.3333333333333333,
+    "6": 0.4,
+    "7": 0.6666666666666666
+  },
+  "gods": [
+    {
+      "id": "backend_services_market_data_service_marketdataservice",
+      "label": "MarketDataService",
+      "degree": 12
+    },
+    {
+      "id": "backend_services_news_engine_groqnewsscoringagent",
+      "label": "GroqNewsScoringAgent",
+      "degree": 10
+    },
+    {
+      "id": "backend_main_execute_full_pipeline",
+      "label": "execute_full_pipeline()",
+      "degree": 8
+    },
+    {
+      "id": "backend_agents_step2_industry_shortlist_industryshortlistagent",
+      "label": "IndustryShortlistAgent",
+      "degree": 7
+    },
+    {
+      "id": "backend_agents_step3_company_comparator_companycomparatoragent",
+      "label": "CompanyComparatorAgent",
+      "degree": 7
+    },
+    {
+      "id": "backend_agents_step4_stock_researcher_stockresearcheragent",
+      "label": "StockResearcherAgent",
+      "degree": 7
+    },
+    {
+      "id": "backend_agents_step1_industry_identifier_industryidentifieragent",
+      "label": "IndustryIdentifierAgent",
+      "degree": 6
+    },
+    {
+      "id": "backend_main_execute_step1",
+      "label": "execute_step1()",
+      "degree": 5
+    },
+    {
+      "id": "backend_main_execute_step2",
+      "label": "execute_step2()",
+      "degree": 5
+    },
+    {
+      "id": "backend_main_execute_step3",
+      "label": "execute_step3()",
+      "degree": 5
+    }
+  ],
+  "surprises": [
+    {
+      "source": "execute_step1()",
+      "target": "IndustryIdentifierAgent",
+      "source_files": [
+        "backend/main.py",
+        "backend/agents/step1_industry_identifier.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+    },
+    {
+      "source": "IndustryShortlistAgent",
+      "target": "MarketDataService",
+      "source_files": [
+        "backend/agents/step2_industry_shortlist.py",
+        "backend/services/market_data_service.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+    },
+    {
+      "source": "execute_full_pipeline()",
+      "target": "IndustryShortlistAgent",
+      "source_files": [
+        "backend/main.py",
+        "backend/agents/step2_industry_shortlist.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+    },
+    {
+      "source": "execute_step2()",
+      "target": "IndustryShortlistAgent",
+      "source_files": [
+        "backend/main.py",
+        "backend/agents/step2_industry_shortlist.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+    },
+    {
+      "source": "execute_full_pipeline()",
+      "target": "CompanyComparatorAgent",
+      "source_files": [
+        "backend/main.py",
+        "backend/agents/step3_company_comparator.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; bridges separate communities"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}
